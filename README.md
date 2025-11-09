@@ -402,12 +402,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Nethereum](https://nethereum.com/) - For Ethereum .NET integration
 - [Web3Modal](https://web3modal.com/) - For the beautiful wallet connection UI
 
-## 📞 Support
-
-- 📧 Email: support@tricksfor.org
-- 🐛 Issues: [GitHub Issues](https://github.com/Tricksfor-Organization/BlazorWalletConnect/issues)
-- 💬 Discussions: [GitHub Discussions](https://github.com/Tricksfor-Organization/BlazorWalletConnect/discussions)
-
 ## 🔗 Links
 
 - [NuGet Package](https://www.nuget.org/packages/Tricksfor.BlazorWalletConnect/)
