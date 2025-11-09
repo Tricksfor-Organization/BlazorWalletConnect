@@ -13,9 +13,9 @@ Then open your browser to `https://localhost:5001`
 
 ## Important
 
-Before running, update the WalletConnect Project ID in `Program.cs`:
+Before running, configure your WalletConnect Project ID:
 - Get a free Project ID from https://cloud.walletconnect.com/
-- Replace `YOUR_WALLETCONNECT_PROJECT_ID` with your actual ID
+- Set your Project ID using [user secrets](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets) or by adding it to `appsettings.json` (see lines 23-27 in `Program.cs`)
 
 ## More Information
 
