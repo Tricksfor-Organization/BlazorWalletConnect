@@ -29,7 +29,7 @@ namespace BlazorWalletConnect.Services
             if (!_configured)
             {
                 var module = await GetModuleAsync();
-                
+
                 await module.InvokeVoidAsync("configure", JsonSerializer.Serialize(_options), _jsRef);
                 _configured = true;
             }

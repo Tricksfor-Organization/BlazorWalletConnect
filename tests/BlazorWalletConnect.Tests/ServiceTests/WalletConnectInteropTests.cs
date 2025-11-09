@@ -24,7 +24,7 @@ public class WalletConnectInteropTests
     {
         _jsRuntime = Substitute.For<IJSRuntime>();
         _jsModule = Substitute.For<IJSObjectReference>();
-        
+
         _options = new WalletConnectOptions
         {
             ProjectId = "test-project-id",
@@ -334,7 +334,7 @@ public class WalletConnectInteropTests
 
         var currentAccount = new AccountDto("0xNew", ["0xNew"], true, false, false, false, "connected", 1);
         var prevAccount = new AccountDto("0xOld", ["0xOld"], false, false, true, false, "disconnected", 1);
-        
+
         var currentJson = Newtonsoft.Json.JsonConvert.SerializeObject(currentAccount);
         var prevJson = Newtonsoft.Json.JsonConvert.SerializeObject(prevAccount);
 
