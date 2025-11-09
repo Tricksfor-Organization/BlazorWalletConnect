@@ -2,18 +2,18 @@
 @using Microsoft.AspNetCore.Components.Web
 @inject IWalletConnectInterop _walletConnectInterop
 
-@if (string.IsNullOrEmpty(Lable))
+@if (string.IsNullOrEmpty(Label))
 {
     <w3m-button />
 }
 else
 {
-    <w3m-button label=@Lable balance=@(ShowBalance ? "show" : "hide") />
+    <w3m-button label=@Label balance=@(ShowBalance ? "show" : "hide") />
 }
 
 @code {
     [Parameter]
-    public string? Lable { get; set; }
+    public string? Label { get; set; }
 
     [Parameter]
     public bool ShowBalance { get; set; } = true;
