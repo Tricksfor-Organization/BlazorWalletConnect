@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorWalletConnect", "src\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorWalletConnectDemo", "demo\BlazorWalletConnectDemo\BlazorWalletConnectDemo.csproj", "{C4B40DCB-3F3E-49F6-B4E8-DE1699A34210}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorWalletConnect.Tests", "tests\BlazorWalletConnect.Tests\BlazorWalletConnect.Tests.csproj", "{177F0520-B4D6-4BCA-95F9-1E7DA4CA50BF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{C4B40DCB-3F3E-49F6-B4E8-DE1699A34210}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C4B40DCB-3F3E-49F6-B4E8-DE1699A34210}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C4B40DCB-3F3E-49F6-B4E8-DE1699A34210}.Release|Any CPU.Build.0 = Release|Any CPU
+		{177F0520-B4D6-4BCA-95F9-1E7DA4CA50BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{177F0520-B4D6-4BCA-95F9-1E7DA4CA50BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{177F0520-B4D6-4BCA-95F9-1E7DA4CA50BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{177F0520-B4D6-4BCA-95F9-1E7DA4CA50BF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
