@@ -21,7 +21,7 @@ builder.Services.AddBlazorWalletConnect(options =>
             "WalletConnect ProjectId is not configured. " +
             "Please set it using: dotnet user-secrets set \"WalletConnect:ProjectId\" \"YOUR_PROJECT_ID\"");
     }
-    
+
     options.ProjectId = projectId;
     options.Name = "BlazorWalletConnect Demo";
     options.Description = "A demo application showcasing BlazorWalletConnect integration";

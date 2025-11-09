@@ -33,7 +33,7 @@ public class WalletConnectOptions
 
     [JsonPropertyName("enableEmail")]
     public required bool EnableEmail { get; set; }
-    
+
     [JsonPropertyName("chainIds")]
     public required List<ChainDto> Chains { get; set; }
 }
