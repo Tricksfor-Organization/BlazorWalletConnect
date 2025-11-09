@@ -40,7 +40,10 @@ public class WalletConnectOptions
 
 public class ChainDto(Nethereum.Signer.Chain chain, string? rpcUrl)
 {
+    [JsonPropertyName("chainId")]
     public Nethereum.Signer.Chain Chain { get; } = chain;
+
+    [JsonPropertyName("rpcUrl")]
     public string? RpcUrl { get; } = rpcUrl;
 
 }
