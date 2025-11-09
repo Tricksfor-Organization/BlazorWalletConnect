@@ -6,14 +6,14 @@ namespace BlazorWalletConnect
 {
     public static class Configurations
     {
-        public static IServiceCollection AddWalletConnectConfiguration(this IServiceCollection services, Action<WalletConnectOptions>? configure)
+        public static IServiceCollection AddBlazorWalletConnect(this IServiceCollection services, Action<WalletConnectOptions>? configure)
         {
             services.Configure<WalletConnectOptions>(options =>
             {
                 configure?.Invoke(options);
                 if (string.IsNullOrEmpty(options.ProjectId))
                 {
-                    throw new Exception("You must provide a project Id to initialise WalletConnect.");
+                    throw new InvalidOperationException("You must provide a project Id to initialise WalletConnect.");
                 }
             });
 

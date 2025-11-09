@@ -7,6 +7,15 @@
 ## - https://github.com/github/gitignore/blob/main/Node.gitignore
 
 # ======================
+# Secrets and Configuration
+# ======================
+
+# Exclude appsettings with potentially sensitive data
+**/appsettings.Development.json
+**/appsettings.*.json
+!**/appsettings.json
+
+# ======================
 # .NET Build Results
 # ======================
 
