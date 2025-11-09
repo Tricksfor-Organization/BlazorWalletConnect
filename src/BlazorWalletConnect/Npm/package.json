@@ -1,0 +1,25 @@
+{
+  "name": "npm",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.ts",
+  "scripts": {
+    "build": "esbuild ./src/js/main.ts --outfile=../wwwroot/main.bundle.js --bundle --minify --format=esm",
+    "buildDebug": "esbuild ./src/js/main.ts --outfile=../wwwroot/main.bundle.js --bundle --sourcemap --format=esm"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "esbuild": "^0.26.0",
+    "eslint": "^9.39.1",
+    "webpack": "^5.102.1",
+    "webpack-cli": "^6.0.1"
+  },
+  "dependencies": {
+    "@wagmi/connectors": "^5.11.2",
+    "@wagmi/core": "^2.21.2",
+    "@web3modal/wagmi": "^4.2.3",
+    "viem": "^2.38.6"
+  }
+}

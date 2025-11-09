@@ -1,0 +1,31 @@
+﻿@using BlazorWalletConnect.Services
+@using Microsoft.AspNetCore.Components.Web
+@inject IWalletConnectInterop _walletConnectInterop
+
+@if (string.IsNullOrEmpty(Lable))
+{
+    <w3m-button />
+}
+else
+{
+    <w3m-button label=@Lable balance=@(ShowBalance ? "show" : "hide") />
+}
+
+@code {
+    [Parameter]
+    public string? Lable { get; set; }
+
+    [Parameter]
+    public bool ShowBalance { get; set; } = true;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+        {
+            await _walletConnectInterop.ConfigureAsync();
+            StateHasChanged();
+        }
+    }
+}

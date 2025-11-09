@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+		<SupportedPlatform Include="browser" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" />
+		<PackageReference Include="Nethereum.Contracts" />
+		<PackageReference Include="Microsoft.TypeScript.MSBuild" >
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+
+	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+		<Exec Command="npm install" WorkingDirectory="Npm" />
+		<Exec Command="npm run buildDebug" WorkingDirectory="Npm" Condition="'$(Configuration)' == 'Debug'" />
+		<Exec Command="npm run build" WorkingDirectory="Npm" Condition="'$(Configuration)' == 'Release'" />
+	</Target>
+
+</Project>
