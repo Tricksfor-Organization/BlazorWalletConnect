@@ -6,7 +6,7 @@ A Progressive Web App (PWA) demonstrating the integration of BlazorWalletConnect
 
 ### Prerequisites
 
-- .NET 9.0 SDK or later
+- .NET 9.*.* SDK or later
 - A WalletConnect Project ID (free from [WalletConnect Cloud](https://cloud.walletconnect.com/))
 - (Optional) An Infura API key for custom RPC endpoints
 
