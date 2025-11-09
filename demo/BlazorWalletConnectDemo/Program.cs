@@ -34,7 +34,8 @@ builder.Services.AddBlazorWalletConnect(options =>
     options.EnableEmail = true;
     options.Chains = new List<BlazorWalletConnect.Models.ChainDto>
     {
-        new(Chain.MainNet, "https://mainnet.infura.io/v3/YOUR_INFURA_KEY"),
+        // Replace 'YOUR_INFURA_KEY_HERE' with your actual Infura API key.
+        new(Chain.MainNet, "https://mainnet.infura.io/v3/YOUR_INFURA_KEY_HERE"),
         new(Chain.Polygon, "https://polygon-rpc.com")
     };
 });
