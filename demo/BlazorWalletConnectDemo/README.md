@@ -65,7 +65,7 @@ This demo showcases the following features of BlazorWalletConnect:
 Simply add the component to your Razor page:
 
 ```razor
-<WalletConnectButton Lable="Connect Wallet" ShowBalance="true" />
+<WalletConnectButton Label="Connect Wallet" ShowBalance="true" />
 ```
 
 ### Configuration
