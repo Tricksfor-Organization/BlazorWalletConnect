@@ -53,7 +53,7 @@ namespace BlazorWalletConnect.Services
             var module = await EnsureConfiguredAsync();
             var stringResult = await module.InvokeAsync<string>("getWalletMainBalance");
             var internalDto = JsonSerializer.Deserialize<WalletConnectBalanceDto>(stringResult);
-            
+
             if (internalDto is null)
                 return null;
 
@@ -69,7 +69,7 @@ namespace BlazorWalletConnect.Services
             var module = await EnsureConfiguredAsync();
             var stringResult = await module.InvokeAsync<string>("getBalanceOfErc20Token", erc20TokenAddress);
             var internalDto = JsonSerializer.Deserialize<WalletConnectBalanceDto>(stringResult);
-            
+
             if (internalDto is null)
                 return null;
 
