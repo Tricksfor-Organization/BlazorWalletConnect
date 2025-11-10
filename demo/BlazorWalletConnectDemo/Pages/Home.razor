@@ -1,4 +1,6 @@
 @page "/"
+@inject IWalletConnectInterop WalletConnect
+@using System.Numerics
 
 <PageTitle>BlazorWalletConnect Demo</PageTitle>
 
@@ -12,9 +14,38 @@
         <h2>Connect Your Wallet</h2>
         <p>Click the button below to connect your Web3 wallet using WalletConnect protocol:</p>
         
-        <div style="margin: 2rem 0; display: flex; justify-content: center;">
+        <div style="margin: 2rem 0; display: flex; flex-direction: column; align-items: center; gap: 1rem;">
             <WalletConnectButton Label="Connect Wallet" ShowBalance="true" />
+            
+            <div style="width: 100%; max-width: 300px; height: 1px; background: linear-gradient(to right, transparent, #ddd, transparent); margin: 0.5rem 0;"></div>
+            
+            <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+                <button class="btn-primary" @onclick="GetBalanceAsync" disabled="@isLoadingBalance">
+                    @if (isLoadingBalance)
+                    {
+                        <span>Loading...</span>
+                    }
+                    else
+                    {
+                        <span>💰 Get Balance</span>
+                    }
+                </button>
+                
+                @if (!string.IsNullOrEmpty(balanceMessage))
+                {
+                    <div style="padding: 0.5rem 1rem; background: #f0f9ff; border-left: 4px solid #0284c7; border-radius: 4px;">
+                        <strong>Balance:</strong> @balanceMessage
+                    </div>
+                }
+            </div>
         </div>
+
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div style="margin: 1rem 0; padding: 1rem; background: #fef2f2; border-left: 4px solid #dc2626; border-radius: 4px;">
+                <strong>Error:</strong> @errorMessage
+            </div>
+        }
 
         <div class="info-card">
             <h3>📱 About This Demo</h3>
@@ -80,3 +111,54 @@
         </p>
     </div>
 </div>
+
+@code {
+    private bool isLoadingBalance = false;
+    private string? balanceMessage;
+    private string? errorMessage;
+
+    private async Task GetBalanceAsync()
+    {
+        isLoadingBalance = true;
+        errorMessage = null;
+        balanceMessage = null;
+
+        try
+        {
+            var balance = await WalletConnect.GetBalanceAsync();
+            
+            if (balance != null)
+            {
+                var formatted = ConvertToDecimal(balance.Value, balance.Decimals);
+                balanceMessage = $"{formatted} {balance.Symbol}";
+            }
+            else
+            {
+                errorMessage = "Unable to retrieve balance. Please ensure your wallet is connected.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Failed to get balance: {ex.Message}";
+        }
+        finally
+        {
+            isLoadingBalance = false;
+        }
+    }
+
+    static decimal ConvertToDecimal(BigInteger value, int decimalPlacesToUnit)
+    {
+        if(decimalPlacesToUnit == 0)
+            return Nethereum.Util.UnitConversion.Convert.FromWei(value);
+        else
+            return Nethereum.Util.UnitConversion.Convert.FromWei(value, decimalPlacesToUnit);
+    }
+    static BigInteger ConvertToBigInteger(decimal value, int decimalPlacesToUnit)
+    {
+        if(decimalPlacesToUnit == 0)
+            return Nethereum.Util.UnitConversion.Convert.ToWei(value);
+        else
+            return Nethereum.Util.UnitConversion.Convert.ToWei(value, decimalPlacesToUnit);
+    }
+}

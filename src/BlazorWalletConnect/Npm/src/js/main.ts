@@ -1,4 +1,4 @@
-import { Web3Modal, createWeb3Modal, defaultWagmiConfig } from '@web3modal/wagmi'
+import { createWeb3Modal, defaultWagmiConfig } from '@web3modal/wagmi'
 import { polygon, mainnet, arbitrum, optimism, bsc, Chain } from 'viem/chains'
 import {
     reconnect, disconnect, Config, getAccount, getBalance, GetAccountReturnType,
@@ -10,69 +10,68 @@ import {
 } from '@wagmi/core'
 import { SignableMessage, erc721Abi, createPublicClient, http } from 'viem'
 
-let modal: Web3Modal
 let configured = false
 let walletConfig: Config
 let account: GetAccountReturnType
+
 interface CustomChain {
-    chainId: number,
-    rpcUrl: string|null
+    chainId: number
+    rpcUrl: string | null
 }
-let clientChainIds: [CustomChain]
 
-export async function configure(options: any, dotNetInterop: any) {
+let clientChainIds: CustomChain[]
+
+export async function configure(options: string, dotNetInterop: any): Promise<void> {
     if (configured) {
-        return;
+        return
     }
-    let { projectId, name, description, url, termsConditionsUrl, privacyPolicyUrl, themeMode, backgroundColor, accentColor,
-        enableEmail, chainIds } = JSON.parse(options);
 
-    // 2. Create wagmiConfig
+    const { projectId, name, description, url, termsConditionsUrl, privacyPolicyUrl, themeMode, backgroundColor, accentColor,
+        enableEmail, chainIds } = JSON.parse(options)
+
+    // Create wagmiConfig
     const metadata = {
-        name: name,
-        description: description,
-        url: url, // origin must match your domain & subdomain.
+        name,
+        description,
+        url, // origin must match your domain & subdomain
         icons: ['https://avatars.githubusercontent.com/u/37784886']
     }
 
-    let chains: [Chain] = chainIds.map((s: CustomChain) => { 
+    const chains: Chain[] = chainIds.map((s: CustomChain) => {
         if (s.chainId === mainnet.id) return mainnet
         else if (s.chainId === polygon.id) return polygon
         else if (s.chainId === arbitrum.id) return arbitrum
         else if (s.chainId === optimism.id) return optimism
         else if (s.chainId === bsc.id) return bsc
-        else throw new Error('ChainId not found.');
+        else throw new Error('ChainId not found.')
     })
 
-    for (const item of chainIds) {
-        if (clientChainIds === undefined)
-            clientChainIds = [ { chainId:  item.chainId, rpcUrl: item.rpcUrl }]
-        else
-            clientChainIds.push(item)
-    }
+    clientChainIds = chainIds.map((item: CustomChain) => ({
+        chainId: item.chainId,
+        rpcUrl: item.rpcUrl
+    }))
 
     const config = defaultWagmiConfig({
-        chains,
+        chains: chains as [Chain, ...Chain[]],
         projectId,
         metadata,
-        enableEmail: enableEmail
-        //...wagmiOptions // Optional - Override createConfig parameters
+        enableEmail
     })
 
     walletConfig = config
 
     reconnect(config)
 
-    // 3. Create modal
-    modal = createWeb3Modal({
+    // Create modal
+    createWeb3Modal({
         wagmiConfig: config,
         projectId,
         enableAnalytics: true, // Optional - defaults to your Cloud configuration
         enableOnramp: true, // Optional - false as default
-        termsConditionsUrl: termsConditionsUrl,
+        termsConditionsUrl,
         defaultChain: chains[0],
-        privacyPolicyUrl: privacyPolicyUrl,
-        themeMode: themeMode,
+        privacyPolicyUrl,
+        themeMode,
         themeVariables: {
             '--w3m-color-mix': backgroundColor,
             '--w3m-accent': accentColor
@@ -80,69 +79,85 @@ export async function configure(options: any, dotNetInterop: any) {
     })
 
     watchAccount(walletConfig, {
-        onChange: (currenctAccount, prevAccount) => {
+        onChange: (currentAccount, prevAccount) => {
             account = getAccount(walletConfig)
-            dotNetInterop.invokeMethodAsync('OnAccountChanged', JSON.stringify(currenctAccount, connectorReplacer), JSON.stringify(prevAccount, connectorReplacer));
+            dotNetInterop.invokeMethodAsync('OnAccountChanged', JSON.stringify(currentAccount, connectorReplacer), JSON.stringify(prevAccount, connectorReplacer))
         }
     })
 
     watchChainId(walletConfig, {
-        onChange: (currenctChainId, prevChainId) => {
+        onChange: (currentChainId, prevChainId) => {
             account = getAccount(walletConfig)
-            dotNetInterop.invokeMethodAsync('OnChainIdChanged', currenctChainId, prevChainId);
+            dotNetInterop.invokeMethodAsync('OnChainIdChanged', currentChainId, prevChainId)
         }
     })
 
-    configured = true;
+    configured = true
 }
 
-export async function disconnectWallet() {
+export async function disconnectWallet(): Promise<void> {
     if (!configured) {
-        throw new Error("Attempting to disconnect before we have configured.");
+        throw new Error('Attempting to disconnect before we have configured.')
     }
     await disconnect(walletConfig)
 }
 
-export async function getWalletAccount() {
+export async function getWalletAccount(): Promise<string> {
     if (!configured) {
-        throw new Error("Attempting to disconnect before we have configured.");
+        throw new Error('Attempting to get account before we have configured.')
     }
     account = getAccount(walletConfig)
     return JSON.stringify(account, connectorReplacer)
 }
 
-export async function getWalletMainBalance() {
+export async function getWalletMainBalance(): Promise<string> {
     if (!configured) {
-        throw new Error("Attempting to disconnect before we have configured.");
+        throw new Error('Attempting to get balance before we have configured.')
     }
 
     await validateAccount()
 
-    let balance = await getBalance(walletConfig, {
+    const balance = await getBalance(walletConfig, {
         address: account.address!,
         chainId: account.chainId
     })
-    return JSON.stringify(balance, bigIntegerReplacer)
+    
+    // Convert BigInt to string manually before JSON.stringify
+    const balanceWithStringValue = {
+        decimals: balance.decimals,
+        symbol: balance.symbol,
+        value: balance.value.toString()
+    }
+    
+    return JSON.stringify(balanceWithStringValue)
 }
 
-export async function getBalanceOfErc20Token(tokenAddress: '0x${string}') {
+export async function getBalanceOfErc20Token(tokenAddress: `0x${string}`): Promise<string> {
     if (!configured) {
-        throw new Error("Attempting to disconnect before we have configured.");
+        throw new Error('Attempting to get token balance before we have configured.')
     }
 
     await validateAccount()
 
-    let balance = await getBalance(walletConfig, {
+    const balance = await getBalance(walletConfig, {
         address: account.address!,
         chainId: account.chainId,
         token: tokenAddress
     })
-    return JSON.stringify(balance, bigIntegerReplacer)
+    
+    // Convert BigInt to string manually before JSON.stringify
+    const balanceWithStringValue = {
+        decimals: balance.decimals,
+        symbol: balance.symbol,
+        value: balance.value.toString()
+    }
+    
+    return JSON.stringify(balanceWithStringValue)
 }
 
-export async function SendTransaction(input: string, dotNetInterop: any) {
+export async function SendTransaction(input: string, dotNetInterop: any): Promise<string> {
     if (!configured) {
-        throw new Error("Attempting to send transaction before we have configured.");
+        throw new Error('Attempting to send transaction before we have configured.')
     }
 
     await validateAccount()
@@ -164,17 +179,17 @@ export async function SendTransaction(input: string, dotNetInterop: any) {
             gas: preparedTransaction.gas,
             chainId: account.chainId,
             data: preparedTransaction.data
-        });
+        })
 
         setTimeout(async () => {
             try {
-                const transactionReciept: WaitForTransactionReceiptReturnType = await waitForTransactionReceipt(walletConfig, {
+                const transactionReceipt: WaitForTransactionReceiptReturnType = await waitForTransactionReceipt(walletConfig, {
                     confirmations: 1,
                     hash: transactionHash,
                     chainId: account.chainId
                 })
 
-                dotNetInterop.invokeMethodAsync("OnTransactionConfirmed", JSON.stringify(transactionReciept, transactionRecieptReplacer));
+                dotNetInterop.invokeMethodAsync('OnTransactionConfirmed', JSON.stringify(transactionReceipt, transactionReceiptReplacer))
             }
             catch (e) {
                 const error = e as WaitForTransactionReceiptErrorType
@@ -183,7 +198,7 @@ export async function SendTransaction(input: string, dotNetInterop: any) {
                     return JSON.stringify(error.details)
                 return error.message
             }
-        }, 0);
+        }, 0)
 
         return JSON.stringify(transactionHash) 
     }
@@ -206,9 +221,9 @@ export async function SendTransaction(input: string, dotNetInterop: any) {
     }
 }
 
-export async function SignMessage(message: SignableMessage) {
+export async function SignMessage(message: SignableMessage): Promise<string> {
     if (!configured) {
-        throw new Error("Attempting to sign message before we have configured.");
+        throw new Error('Attempting to sign message before we have configured.')
     }
 
     await validateAccount()
@@ -217,9 +232,9 @@ export async function SignMessage(message: SignableMessage) {
         const result = await signMessage(walletConfig, {
             message: message,
             account: account.address
-        });
+        })
 
-        return JSON.stringify(result);
+        return JSON.stringify(result)
     }
     catch (e) {
         const error = e as SignMessageErrorType
@@ -231,9 +246,9 @@ export async function SignMessage(message: SignableMessage) {
     }
 }
 
-export async function getBalanceOfErc721Token(contractAddress: '0x${string}') {
+export async function getBalanceOfErc721Token(contractAddress: `0x${string}`): Promise<string> {
     if (!configured) {
-        throw new Error("Attempting to disconnect before we have configured.");
+        throw new Error('Attempting to get NFT balance before we have configured.')
     }
 
     await validateAccount()
@@ -248,9 +263,9 @@ export async function getBalanceOfErc721Token(contractAddress: '0x${string}') {
     return JSON.stringify(balance, bigIntegerReplacer)
 }
 
-export async function getTokenOfOwnerByIndex(contractAddress: '0x${string}', index: bigint) {
+export async function getTokenOfOwnerByIndex(contractAddress: `0x${string}`, index: bigint): Promise<string> {
     if (!configured) {
-        throw new Error("Attempting to disconnect before we have configured.");
+        throw new Error('Attempting to get token by index before we have configured.')
     }
 
     await validateAccount()
@@ -285,16 +300,14 @@ export async function getTokenOfOwnerByIndex(contractAddress: '0x${string}', ind
                 "type": "function"
             }
         ],
-        //functionName: 'tokenByIndex',
-        //abi: erc721Abi,
         args: [account.address!, index]
     })
     return JSON.stringify(tokenId, bigIntegerReplacer)
 }
 
-export async function getOwnerOf(contractAddress: '0x${string}', tokenId: bigint) {
+export async function getOwnerOf(contractAddress: `0x${string}`, tokenId: bigint): Promise<string> {
     if (!configured) {
-        throw new Error("Attempting to disconnect before we have configured.");
+        throw new Error('Attempting to get owner before we have configured.')
     }
 
     await validateAccount()
@@ -309,9 +322,9 @@ export async function getOwnerOf(contractAddress: '0x${string}', tokenId: bigint
     return JSON.stringify(owner)
 }
 
-export async function getStakedTokens(contractAddress: '0x${string}', stakeContractAddress: '0x${string}') {
+export async function getStakedTokens(contractAddress: `0x${string}`, stakeContractAddress: `0x${string}`): Promise<string | null> {
     if (!configured) {
-        throw new Error("Attempting to disconnect before we have configured.");
+        throw new Error('Attempting to get staked tokens before we have configured.')
     }
     
     await validateAccount()
@@ -320,7 +333,7 @@ export async function getStakedTokens(contractAddress: '0x${string}', stakeContr
 
     const publicClient = createPublicClient({
         chain: account.chain,
-        transport: selectedChain === null ? http() : http(selectedChain?.rpcUrl!, {
+        transport: selectedChain === null || selectedChain === undefined ? http() : http(selectedChain.rpcUrl!, {
             timeout: 20000
         }),
         batch: {
@@ -354,16 +367,16 @@ export async function getStakedTokens(contractAddress: '0x${string}', stakeContr
         toBlock: 'latest'
     })
 
-    if (stakeLogs == null || undefined)
+    if (stakeLogs === null || stakeLogs === undefined)
         return null
 
-    let distinctTokenIds: Array<bigint> = [];
+    const distinctTokenIds: bigint[] = []
     for (const item of stakeLogs) {
         if (!distinctTokenIds.includes(item.args.tokenId))
             distinctTokenIds.push(item.args.tokenId)
     }
 
-    let result: Array<bigint> = []
+    const result: bigint[] = []
 
     for (const item of distinctTokenIds) {
         const stakes = stakeLogs.filter(exp => exp.args.tokenId === item).length
@@ -375,9 +388,9 @@ export async function getStakedTokens(contractAddress: '0x${string}', stakeContr
     return JSON.stringify(result, bigIntegerReplacer)
 }
 
-export async function switchChainId(chainId: number) {
+export async function switchChainId(chainId: number): Promise<void> {
     if (!configured) {
-        throw new Error("Attempting to sign message before we have configured.");
+        throw new Error('Attempting to switch chain before we have configured.')
     }
 
     await validateAccount()
@@ -388,54 +401,35 @@ export async function switchChainId(chainId: number) {
 }
 
 
-function connectorReplacer(key:string, value:string) {
-    if (key == "connector") {
-        return undefined;
+function connectorReplacer(key: string, value: string) {
+    if (key === 'connector') {
+        return undefined
     }
-    return value;
+    return value
 }
 
 function bigIntegerReplacer(key: string, value: any) {
     if (typeof value === 'bigint') {
-        return value.toString();
+        return value.toString()
     }
-    return value;
+    return value
 }
 
-function transactionRecieptReplacer(key: string, value: any) {
+function transactionReceiptReplacer(key: string, value: any) {
     if (key === 'status') {
         if (value === 'success')
-            return Number(1);
+            return Number(1)
         if (value === 'reverted')
-            return Number(0);
-        return Number(0);
+            return Number(0)
+        return Number(0)
     }
     if (typeof value === 'bigint') {
-        return value.toString();
+        return value.toString()
     }
-    return value;
+    return value
 }
 
 async function validateAccount() {
-    if (account?.address == undefined)
+    if (account?.address === undefined)
         account = getAccount(walletConfig)
-}
-
-
-function getErrorResponse(e:any) {
-    let response = {
-        data: null,
-        error: e.reason ?? e.message ?? e,
-        success: false
-    }
-    return JSON.stringify(response);
-}
-
-function getSuccessResponse(result:any) {
-    let response = {
-        data: result,
-        error: null,
-        success: true
-    };
-    return JSON.stringify(response);
 }

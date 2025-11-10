@@ -37,112 +37,129 @@ namespace BlazorWalletConnect.Services
 
         public async Task DisconnectAsync()
         {
-            await EnsureConfiguredAsync();
-            var module = await GetModuleAsync();
+            var module = await EnsureConfiguredAsync();
             await module.InvokeVoidAsync("disconnectWallet");
         }
 
         public async Task<AccountDto?> GetAccountAsync()
         {
-            await EnsureConfiguredAsync();
-            var module = await GetModuleAsync();
+            var module = await EnsureConfiguredAsync();
             var stringResult = await module.InvokeAsync<string>("getWalletAccount");
             return JsonSerializer.Deserialize<AccountDto>(stringResult);
         }
 
         public async Task<BalanceDto?> GetBalanceAsync()
         {
-            await EnsureConfiguredAsync();
-            var module = await GetModuleAsync();
+            var module = await EnsureConfiguredAsync();
             var stringResult = await module.InvokeAsync<string>("getWalletMainBalance");
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<BalanceDto>(stringResult);
+            var internalDto = JsonSerializer.Deserialize<WalletConnectBalanceDto>(stringResult);
+
+            if (internalDto is null)
+                return null;
+
+            return new BalanceDto(
+                internalDto.Decimals,
+                internalDto.Symbol,
+                BigInteger.Parse(internalDto.Value)
+            );
         }
 
         public async Task<BalanceDto?> GetBalanceAsync(string erc20TokenAddress)
         {
-            await EnsureConfiguredAsync();
-            var module = await GetModuleAsync();
+            var module = await EnsureConfiguredAsync();
             var stringResult = await module.InvokeAsync<string>("getBalanceOfErc20Token", erc20TokenAddress);
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<BalanceDto>(stringResult);
+            var internalDto = JsonSerializer.Deserialize<WalletConnectBalanceDto>(stringResult);
+
+            if (internalDto is null)
+                return null;
+
+            return new BalanceDto(
+                internalDto.Decimals,
+                internalDto.Symbol,
+                BigInteger.Parse(internalDto.Value)
+            );
         }
 
         public async Task<BigInteger?> GetBalanceOfAsync(string erc721ContractAddress)
         {
-            await EnsureConfiguredAsync();
-            var module = await GetModuleAsync();
+            var module = await EnsureConfiguredAsync();
             var stringResult = await module.InvokeAsync<string>("getBalanceOfErc721Token", erc721ContractAddress);
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<BigInteger>(stringResult);
+            var deserializedString = JsonSerializer.Deserialize<string>(stringResult);
+            return deserializedString != null ? BigInteger.Parse(deserializedString) : null;
         }
 
         public async Task<BigInteger?> GetTokenOfOwnerByIndexAsync(string erc721ContractAddress, BigInteger index)
         {
-            await EnsureConfiguredAsync();
-            var module = await GetModuleAsync();
+            var module = await EnsureConfiguredAsync();
             var stringResult = await module.InvokeAsync<string>("getTokenOfOwnerByIndex", erc721ContractAddress, (long)index);
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<BigInteger>(stringResult);
+            var deserializedString = JsonSerializer.Deserialize<string>(stringResult);
+            return deserializedString != null ? BigInteger.Parse(deserializedString) : null;
         }
 
         public async Task<List<BigInteger>?> GetStakedTokensAsync(string erc721ContractAddress, string erc721StakeContractAddress)
         {
-            await EnsureConfiguredAsync();
-            var module = await GetModuleAsync();
+            var module = await EnsureConfiguredAsync();
             var stringResult = await module.InvokeAsync<string>("getStakedTokens", erc721ContractAddress, erc721StakeContractAddress);
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<List<BigInteger>?>(stringResult);
+            var deserializedStrings = JsonSerializer.Deserialize<List<string>>(stringResult);
+            return deserializedStrings?.Select(s => BigInteger.Parse(s)).ToList();
         }
 
         public async Task<string> SendTransactionAsync(TransactionInput transactionInput)
         {
-            await EnsureConfiguredAsync();
-            var module = await GetModuleAsync();
-            var stringResult = await module.InvokeAsync<string>("SendTransaction", Newtonsoft.Json.JsonConvert.SerializeObject(transactionInput), _jsRef);
+            var module = await EnsureConfiguredAsync();
+            var stringResult = await module.InvokeAsync<string>("SendTransaction", JsonSerializer.Serialize(transactionInput), _jsRef);
             try
             {
-                var result = Newtonsoft.Json.JsonConvert.DeserializeObject<string>(stringResult);
-                return result;
+                return JsonSerializer.Deserialize<string>(stringResult) ?? throw new InvalidOperationException("Transaction returned null result");
             }
-            catch
+            catch (JsonException ex)
             {
-                throw new InvalidOperationException(stringResult);
+                throw new InvalidOperationException($"Failed to deserialize transaction result: {stringResult}", ex);
             }
         }
 
-        [JSInvokable()]
+        [JSInvokable]
         public Task OnTransactionConfirmed(string? transactionReceipt)
         {
             if (transactionReceipt is not null)
             {
                 try
                 {
-                    var result = Newtonsoft.Json.JsonConvert.DeserializeObject<TransactionReceipt>(transactionReceipt);
+                    var result = JsonSerializer.Deserialize<TransactionReceipt>(transactionReceipt);
                     if (result is not null)
                     {
                         RaiseTransactionConfirmed(result);
                     }
                 }
-                catch
+                catch (JsonException ex)
                 {
-                    throw new InvalidOperationException(transactionReceipt);
+                    throw new InvalidOperationException($"Failed to deserialize transaction receipt: {transactionReceipt}", ex);
                 }
             }
 
             return Task.CompletedTask;
         }
+
         public event EventHandler<TransactionConfirmedEventArgs>? TransactionConfirmed;
+
         private void RaiseTransactionConfirmed(TransactionReceipt transactionReceipt)
         {
             var e = new TransactionConfirmedEventArgs { TransactionReceipt = transactionReceipt };
             TransactionConfirmed?.Invoke(this, e);
         }
 
-        [JSInvokable()]
+        [JSInvokable]
         public Task OnAccountChanged(string? currentAccount, string? prevAccount)
         {
-            RaiseAccountChanged(Newtonsoft.Json.JsonConvert.DeserializeObject<AccountDto>(currentAccount),
-                Newtonsoft.Json.JsonConvert.DeserializeObject<AccountDto>(prevAccount));
+            var current = currentAccount is not null ? JsonSerializer.Deserialize<AccountDto>(currentAccount) : null;
+            var previous = prevAccount is not null ? JsonSerializer.Deserialize<AccountDto>(prevAccount) : null;
+            RaiseAccountChanged(current, previous);
 
             return Task.CompletedTask;
         }
+
         public event EventHandler<AccountChangedEventArgs>? AccountChanged;
+
         private void RaiseAccountChanged(AccountDto? currentAccount, AccountDto? prevAccount)
         {
             var e = new AccountChangedEventArgs
@@ -153,14 +170,16 @@ namespace BlazorWalletConnect.Services
             AccountChanged?.Invoke(this, e);
         }
 
-        [JSInvokable()]
-        public Task OnChainIdChanged(int? currenctChainId, int? prevChainId)
+        [JSInvokable]
+        public Task OnChainIdChanged(int? currentChainId, int? prevChainId)
         {
-            RaiseChainIdChanged(currenctChainId, prevChainId);
+            RaiseChainIdChanged(currentChainId, prevChainId);
 
             return Task.CompletedTask;
         }
+
         public event EventHandler<ChainIdChangedEventArgs>? ChainIdChanged;
+
         private void RaiseChainIdChanged(int? currentChainId, int? prevChainId)
         {
             var e = new ChainIdChangedEventArgs
@@ -173,49 +192,45 @@ namespace BlazorWalletConnect.Services
 
         public async Task<string> SignMessageAsync(string message)
         {
-            await EnsureConfiguredAsync();
-            var module = await GetModuleAsync();
+            var module = await EnsureConfiguredAsync();
             var stringResult = await module.InvokeAsync<string>("SignMessage", message);
             try
             {
-                var result = Newtonsoft.Json.JsonConvert.DeserializeObject<string>(stringResult);
-                return result;
+                return JsonSerializer.Deserialize<string>(stringResult) ?? throw new InvalidOperationException("Signature returned null result");
             }
-            catch
+            catch (JsonException ex)
             {
-                throw new InvalidOperationException(stringResult);
+                throw new InvalidOperationException($"Failed to deserialize signature result: {stringResult}", ex);
             }
         }
 
         public async Task SwitchChainIdAsync(int chainId)
         {
-            await EnsureConfiguredAsync();
-            var module = await GetModuleAsync();
-            await module.InvokeAsync<string>("switchChainId", chainId);
+            var module = await EnsureConfiguredAsync();
+            await module.InvokeVoidAsync("switchChainId", chainId);
         }
-
-
-
-
-
 
         public async ValueTask DisposeAsync()
         {
-            if (_disposed)
-                return;
+            await DisposeAsyncCore().ConfigureAwait(false);
 
+            Dispose(disposing: false);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual async ValueTask DisposeAsyncCore()
+        {
             if (_module is not null)
-                await _module.DisposeAsync();
+            {
+                await _module.DisposeAsync().ConfigureAwait(false);
+            }
 
             _jsRef?.Dispose();
-            _disposed = true;
-
-            GC.SuppressFinalize(this);
         }
 
         public void Dispose()
         {
-            Dispose(true);
+            Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
 
@@ -226,23 +241,23 @@ namespace BlazorWalletConnect.Services
 
             if (disposing)
             {
-                _module?.DisposeAsync().AsTask().Wait();
                 _jsRef?.Dispose();
             }
 
             _disposed = true;
         }
 
-
         #region Methods
-        private async ValueTask EnsureConfiguredAsync()
+        private async ValueTask<IJSObjectReference> EnsureConfiguredAsync()
         {
             if (!_configured)
             {
                 await ConfigureAsync();
             }
+            return await GetModuleAsync();
         }
-        async Task<IJSObjectReference> GetModuleAsync()
+
+        private async Task<IJSObjectReference> GetModuleAsync()
         {
             if (_module is null)
                 _module = await _jsRuntime.InvokeAsync<IJSObjectReference>("import",

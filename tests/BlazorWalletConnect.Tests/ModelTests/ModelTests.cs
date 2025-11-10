@@ -91,14 +91,12 @@ public class BalanceDtoTests
         // Arrange & Act
         var balance = new BalanceDto(
             Decimals: 18,
-            Formatted: "1.5",
             Symbol: "ETH",
             Value: BigInteger.Parse("1500000000000000000")
         );
 
         // Assert
         balance.Decimals.Should().Be(18);
-        balance.Formatted.Should().Be("1.5");
         balance.Symbol.Should().Be("ETH");
         balance.Value.Should().Be(BigInteger.Parse("1500000000000000000"));
     }
@@ -110,7 +108,7 @@ public class BalanceDtoTests
         var largeValue = BigInteger.Parse("1000000000000000000000000");
 
         // Act
-        var balance = new BalanceDto(18, "1000000", "TKN", largeValue);
+        var balance = new BalanceDto(18, "TKN", largeValue);
 
         // Assert
         balance.Value.Should().Be(largeValue);
@@ -120,11 +118,10 @@ public class BalanceDtoTests
     public void BalanceDto_Properties_ShouldBeAccessible()
     {
         // Arrange & Act
-        var balance = new BalanceDto(6, "100.50", "USDC", new BigInteger(100500000));
+        var balance = new BalanceDto(6, "USDC", new BigInteger(100500000));
 
         // Assert
         balance.Decimals.Should().Be(6);
-        balance.Formatted.Should().Be("100.50");
         balance.Symbol.Should().Be("USDC");
         balance.Value.Should().Be(new BigInteger(100500000));
     }

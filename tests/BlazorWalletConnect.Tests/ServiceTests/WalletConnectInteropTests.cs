@@ -125,7 +125,7 @@ public class WalletConnectInteropTests
     public async Task GetBalanceAsync_WithoutAddress_ShouldReturnBalanceDto()
     {
         // Arrange
-        var jsonResponse = "{\"balance\":\"1000000000000000000\",\"decimals\":18,\"symbol\":\"ETH\"}";
+        var jsonResponse = "{\"value\":\"1000000000000000000\",\"decimals\":18,\"symbol\":\"ETH\"}";
         _jsModule.InvokeAsync<string>("getWalletMainBalance")
             .Returns(jsonResponse);
 
@@ -136,6 +136,9 @@ public class WalletConnectInteropTests
 
         // Assert
         result.Should().NotBeNull();
+        result!.Decimals.Should().Be(18);
+        result.Symbol.Should().Be("ETH");
+        result.Value.Should().Be(BigInteger.Parse("1000000000000000000"));
     }
 
     [Test]
@@ -143,7 +146,7 @@ public class WalletConnectInteropTests
     {
         // Arrange
         var tokenAddress = "0xTokenAddress";
-        var jsonResponse = "{\"balance\":\"5000000000000000000\",\"decimals\":18,\"symbol\":\"TKN\"}";
+        var jsonResponse = "{\"value\":\"5000000000000000000\",\"decimals\":18,\"symbol\":\"TKN\"}";
         _jsModule.InvokeAsync<string>("getBalanceOfErc20Token", Arg.Any<object[]>())
             .Returns(jsonResponse);
 
@@ -154,6 +157,9 @@ public class WalletConnectInteropTests
 
         // Assert
         result.Should().NotBeNull();
+        result!.Decimals.Should().Be(18);
+        result.Symbol.Should().Be("TKN");
+        result.Value.Should().Be(BigInteger.Parse("5000000000000000000"));
     }
 
     [Test]
@@ -258,7 +264,7 @@ public class WalletConnectInteropTests
 
         // Assert
         await act.Should().ThrowAsync<InvalidOperationException>()
-            .WithMessage(invalidResponse);
+            .WithMessage($"Failed to deserialize transaction result: {invalidResponse}");
     }
 
     [Test]
@@ -335,8 +341,8 @@ public class WalletConnectInteropTests
         var currentAccount = new AccountDto("0xNew", ["0xNew"], true, false, false, false, "connected", 1);
         var prevAccount = new AccountDto("0xOld", ["0xOld"], false, false, true, false, "disconnected", 1);
 
-        var currentJson = Newtonsoft.Json.JsonConvert.SerializeObject(currentAccount);
-        var prevJson = Newtonsoft.Json.JsonConvert.SerializeObject(prevAccount);
+        var currentJson = JsonSerializer.Serialize(currentAccount);
+        var prevJson = JsonSerializer.Serialize(prevAccount);
 
         // Act
         await _sut.OnAccountChanged(currentJson, prevJson);
