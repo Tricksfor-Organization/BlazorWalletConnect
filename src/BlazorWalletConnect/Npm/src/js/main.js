@@ -25,7 +25,6 @@ const wagmi_1 = require("@web3modal/wagmi");
 const chains_1 = require("viem/chains");
 const core_1 = require("@wagmi/core");
 const viem_1 = require("viem");
-let modal;
 let configured = false;
 let walletConfig;
 let account;
@@ -35,15 +34,15 @@ function configure(options, dotNetInterop) {
         if (configured) {
             return;
         }
-        let { projectId, name, description, url, termsConditionsUrl, privacyPolicyUrl, themeMode, backgroundColor, accentColor, enableEmail, chainIds } = JSON.parse(options);
-        // 2. Create wagmiConfig
+        const { projectId, name, description, url, termsConditionsUrl, privacyPolicyUrl, themeMode, backgroundColor, accentColor, enableEmail, chainIds } = JSON.parse(options);
+        // Create wagmiConfig
         const metadata = {
-            name: name,
-            description: description,
-            url: url, // origin must match your domain & subdomain.
+            name,
+            description,
+            url, // origin must match your domain & subdomain
             icons: ['https://avatars.githubusercontent.com/u/37784886']
         };
-        let chains = chainIds.map((s) => {
+        const chains = chainIds.map((s) => {
             if (s.chainId === chains_1.mainnet.id)
                 return chains_1.mainnet;
             else if (s.chainId === chains_1.polygon.id)
@@ -57,46 +56,43 @@ function configure(options, dotNetInterop) {
             else
                 throw new Error('ChainId not found.');
         });
-        for (const item of chainIds) {
-            if (clientChainIds === undefined)
-                clientChainIds = [{ chainId: item.chainId, rpcUrl: item.rpcUrl }];
-            else
-                clientChainIds.push(item);
-        }
+        clientChainIds = chainIds.map((item) => ({
+            chainId: item.chainId,
+            rpcUrl: item.rpcUrl
+        }));
         const config = (0, wagmi_1.defaultWagmiConfig)({
-            chains,
+            chains: chains,
             projectId,
             metadata,
-            enableEmail: enableEmail
-            //...wagmiOptions // Optional - Override createConfig parameters
+            enableEmail
         });
         walletConfig = config;
         (0, core_1.reconnect)(config);
-        // 3. Create modal
-        modal = (0, wagmi_1.createWeb3Modal)({
+        // Create modal
+        (0, wagmi_1.createWeb3Modal)({
             wagmiConfig: config,
             projectId,
             enableAnalytics: true, // Optional - defaults to your Cloud configuration
             enableOnramp: true, // Optional - false as default
-            termsConditionsUrl: termsConditionsUrl,
+            termsConditionsUrl,
             defaultChain: chains[0],
-            privacyPolicyUrl: privacyPolicyUrl,
-            themeMode: themeMode,
+            privacyPolicyUrl,
+            themeMode,
             themeVariables: {
                 '--w3m-color-mix': backgroundColor,
                 '--w3m-accent': accentColor
             }
         });
         (0, core_1.watchAccount)(walletConfig, {
-            onChange: (currenctAccount, prevAccount) => {
+            onChange: (currentAccount, prevAccount) => {
                 account = (0, core_1.getAccount)(walletConfig);
-                dotNetInterop.invokeMethodAsync('OnAccountChanged', JSON.stringify(currenctAccount, connectorReplacer), JSON.stringify(prevAccount, connectorReplacer));
+                dotNetInterop.invokeMethodAsync('OnAccountChanged', JSON.stringify(currentAccount, connectorReplacer), JSON.stringify(prevAccount, connectorReplacer));
             }
         });
         (0, core_1.watchChainId)(walletConfig, {
-            onChange: (currenctChainId, prevChainId) => {
+            onChange: (currentChainId, prevChainId) => {
                 account = (0, core_1.getAccount)(walletConfig);
-                dotNetInterop.invokeMethodAsync('OnChainIdChanged', currenctChainId, prevChainId);
+                dotNetInterop.invokeMethodAsync('OnChainIdChanged', currentChainId, prevChainId);
             }
         });
         configured = true;
@@ -105,7 +101,7 @@ function configure(options, dotNetInterop) {
 function disconnectWallet() {
     return __awaiter(this, void 0, void 0, function* () {
         if (!configured) {
-            throw new Error("Attempting to disconnect before we have configured.");
+            throw new Error('Attempting to disconnect before we have configured.');
         }
         yield (0, core_1.disconnect)(walletConfig);
     });
@@ -113,7 +109,7 @@ function disconnectWallet() {
 function getWalletAccount() {
     return __awaiter(this, void 0, void 0, function* () {
         if (!configured) {
-            throw new Error("Attempting to disconnect before we have configured.");
+            throw new Error('Attempting to get account before we have configured.');
         }
         account = (0, core_1.getAccount)(walletConfig);
         return JSON.stringify(account, connectorReplacer);
@@ -122,35 +118,47 @@ function getWalletAccount() {
 function getWalletMainBalance() {
     return __awaiter(this, void 0, void 0, function* () {
         if (!configured) {
-            throw new Error("Attempting to disconnect before we have configured.");
+            throw new Error('Attempting to get balance before we have configured.');
         }
         yield validateAccount();
-        let balance = yield (0, core_1.getBalance)(walletConfig, {
+        const balance = yield (0, core_1.getBalance)(walletConfig, {
             address: account.address,
             chainId: account.chainId
         });
-        return JSON.stringify(balance, bigIntegerReplacer);
+        // Convert BigInt to string manually before JSON.stringify
+        const balanceWithStringValue = {
+            decimals: balance.decimals,
+            symbol: balance.symbol,
+            value: balance.value.toString()
+        };
+        return JSON.stringify(balanceWithStringValue);
     });
 }
 function getBalanceOfErc20Token(tokenAddress) {
     return __awaiter(this, void 0, void 0, function* () {
         if (!configured) {
-            throw new Error("Attempting to disconnect before we have configured.");
+            throw new Error('Attempting to get token balance before we have configured.');
         }
         yield validateAccount();
-        let balance = yield (0, core_1.getBalance)(walletConfig, {
+        const balance = yield (0, core_1.getBalance)(walletConfig, {
             address: account.address,
             chainId: account.chainId,
             token: tokenAddress
         });
-        return JSON.stringify(balance, bigIntegerReplacer);
+        // Convert BigInt to string manually before JSON.stringify
+        const balanceWithStringValue = {
+            decimals: balance.decimals,
+            symbol: balance.symbol,
+            value: balance.value.toString()
+        };
+        return JSON.stringify(balanceWithStringValue);
     });
 }
 function SendTransaction(input, dotNetInterop) {
     return __awaiter(this, void 0, void 0, function* () {
         var _a;
         if (!configured) {
-            throw new Error("Attempting to send transaction before we have configured.");
+            throw new Error('Attempting to send transaction before we have configured.');
         }
         yield validateAccount();
         try {
@@ -171,12 +179,12 @@ function SendTransaction(input, dotNetInterop) {
             });
             setTimeout(() => __awaiter(this, void 0, void 0, function* () {
                 try {
-                    const transactionReciept = yield (0, core_1.waitForTransactionReceipt)(walletConfig, {
+                    const transactionReceipt = yield (0, core_1.waitForTransactionReceipt)(walletConfig, {
                         confirmations: 1,
                         hash: transactionHash,
                         chainId: account.chainId
                     });
-                    dotNetInterop.invokeMethodAsync("OnTransactionConfirmed", JSON.stringify(transactionReciept, transactionRecieptReplacer));
+                    dotNetInterop.invokeMethodAsync('OnTransactionConfirmed', JSON.stringify(transactionReceipt, transactionReceiptReplacer));
                 }
                 catch (e) {
                     const error = e;
@@ -207,7 +215,7 @@ function SendTransaction(input, dotNetInterop) {
 function SignMessage(message) {
     return __awaiter(this, void 0, void 0, function* () {
         if (!configured) {
-            throw new Error("Attempting to sign message before we have configured.");
+            throw new Error('Attempting to sign message before we have configured.');
         }
         yield validateAccount();
         try {
@@ -230,7 +238,7 @@ function SignMessage(message) {
 function getBalanceOfErc721Token(contractAddress) {
     return __awaiter(this, void 0, void 0, function* () {
         if (!configured) {
-            throw new Error("Attempting to disconnect before we have configured.");
+            throw new Error('Attempting to get NFT balance before we have configured.');
         }
         yield validateAccount();
         const balance = yield (0, core_1.readContract)(walletConfig, {
@@ -246,7 +254,7 @@ function getBalanceOfErc721Token(contractAddress) {
 function getTokenOfOwnerByIndex(contractAddress, index) {
     return __awaiter(this, void 0, void 0, function* () {
         if (!configured) {
-            throw new Error("Attempting to disconnect before we have configured.");
+            throw new Error('Attempting to get token by index before we have configured.');
         }
         yield validateAccount();
         const tokenId = yield (0, core_1.readContract)(walletConfig, {
@@ -279,8 +287,6 @@ function getTokenOfOwnerByIndex(contractAddress, index) {
                     "type": "function"
                 }
             ],
-            //functionName: 'tokenByIndex',
-            //abi: erc721Abi,
             args: [account.address, index]
         });
         return JSON.stringify(tokenId, bigIntegerReplacer);
@@ -289,7 +295,7 @@ function getTokenOfOwnerByIndex(contractAddress, index) {
 function getOwnerOf(contractAddress, tokenId) {
     return __awaiter(this, void 0, void 0, function* () {
         if (!configured) {
-            throw new Error("Attempting to disconnect before we have configured.");
+            throw new Error('Attempting to get owner before we have configured.');
         }
         yield validateAccount();
         const owner = yield (0, core_1.readContract)(walletConfig, {
@@ -305,13 +311,13 @@ function getOwnerOf(contractAddress, tokenId) {
 function getStakedTokens(contractAddress, stakeContractAddress) {
     return __awaiter(this, void 0, void 0, function* () {
         if (!configured) {
-            throw new Error("Attempting to disconnect before we have configured.");
+            throw new Error('Attempting to get staked tokens before we have configured.');
         }
         yield validateAccount();
         const selectedChain = clientChainIds.find(exp => exp.chainId === account.chainId);
         const publicClient = (0, viem_1.createPublicClient)({
             chain: account.chain,
-            transport: selectedChain === null ? (0, viem_1.http)() : (0, viem_1.http)(selectedChain === null || selectedChain === void 0 ? void 0 : selectedChain.rpcUrl, {
+            transport: selectedChain === null || selectedChain === undefined ? (0, viem_1.http)() : (0, viem_1.http)(selectedChain.rpcUrl, {
                 timeout: 20000
             }),
             batch: {
@@ -342,14 +348,14 @@ function getStakedTokens(contractAddress, stakeContractAddress) {
             fromBlock: 'earliest',
             toBlock: 'latest'
         });
-        if (stakeLogs == null || undefined)
+        if (stakeLogs === null || stakeLogs === undefined)
             return null;
-        let distinctTokenIds = [];
+        const distinctTokenIds = [];
         for (const item of stakeLogs) {
             if (!distinctTokenIds.includes(item.args.tokenId))
                 distinctTokenIds.push(item.args.tokenId);
         }
-        let result = [];
+        const result = [];
         for (const item of distinctTokenIds) {
             const stakes = stakeLogs.filter(exp => exp.args.tokenId === item).length;
             const unstakes = unStakeLogs.filter(exp => exp.args.tokenId === item).length;
@@ -362,7 +368,7 @@ function getStakedTokens(contractAddress, stakeContractAddress) {
 function switchChainId(chainId) {
     return __awaiter(this, void 0, void 0, function* () {
         if (!configured) {
-            throw new Error("Attempting to sign message before we have configured.");
+            throw new Error('Attempting to switch chain before we have configured.');
         }
         yield validateAccount();
         (0, core_1.switchChain)(walletConfig, {
@@ -371,7 +377,7 @@ function switchChainId(chainId) {
     });
 }
 function connectorReplacer(key, value) {
-    if (key == "connector") {
+    if (key === 'connector') {
         return undefined;
     }
     return value;
@@ -382,7 +388,7 @@ function bigIntegerReplacer(key, value) {
     }
     return value;
 }
-function transactionRecieptReplacer(key, value) {
+function transactionReceiptReplacer(key, value) {
     if (key === 'status') {
         if (value === 'success')
             return Number(1);
@@ -397,25 +403,8 @@ function transactionRecieptReplacer(key, value) {
 }
 function validateAccount() {
     return __awaiter(this, void 0, void 0, function* () {
-        if ((account === null || account === void 0 ? void 0 : account.address) == undefined)
+        if ((account === null || account === void 0 ? void 0 : account.address) === undefined)
             account = (0, core_1.getAccount)(walletConfig);
     });
-}
-function getErrorResponse(e) {
-    var _a, _b;
-    let response = {
-        data: null,
-        error: (_b = (_a = e.reason) !== null && _a !== void 0 ? _a : e.message) !== null && _b !== void 0 ? _b : e,
-        success: false
-    };
-    return JSON.stringify(response);
-}
-function getSuccessResponse(result) {
-    let response = {
-        data: result,
-        error: null,
-        success: true
-    };
-    return JSON.stringify(response);
 }
 //# sourceMappingURL=main.js.map
