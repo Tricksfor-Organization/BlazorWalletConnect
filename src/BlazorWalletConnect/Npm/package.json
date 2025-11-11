@@ -19,7 +19,13 @@
   "dependencies": {
     "@wagmi/connectors": "^5.11.2",
     "@wagmi/core": "^2.21.2",
-    "@web3modal/wagmi": "^4.2.3",
+    "@web3modal/wagmi": "^5.1.11",
     "viem": "^2.38.6"
+  },
+  "overrides": {
+    "@walletconnect/sign-client": "2.23.0",
+    "@walletconnect/types": "2.23.0",
+    "@walletconnect/utils": "2.23.0",
+    "@walletconnect/core": "2.23.0"
   }
 }
