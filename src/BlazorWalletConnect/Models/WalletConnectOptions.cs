@@ -31,9 +31,6 @@ public class WalletConnectOptions
     [JsonPropertyName("accentColor")]
     public required string AccentColor { get; set; }
 
-    [JsonPropertyName("enableEmail")]
-    public required bool EnableEmail { get; set; }
-
     [JsonPropertyName("chainIds")]
     public required List<ChainDto> Chains { get; set; }
 }

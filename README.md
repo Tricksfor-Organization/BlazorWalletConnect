@@ -75,7 +75,6 @@ builder.Services.AddBlazorWalletConnect(options =>
     options.ThemeMode = "dark"; // "light", "dark", or "auto"
     options.BackgroundColor = "#000000";
     options.AccentColor = "#3b82f6";
-    options.EnableEmail = true;
     
     // Supported Chains
     options.Chains = new List<ChainDto>

@@ -31,7 +31,6 @@ builder.Services.AddBlazorWalletConnect(options =>
     options.ThemeMode = "dark";
     options.BackgroundColor = "#1a1a1a";
     options.AccentColor = "#3b82f6";
-    options.EnableEmail = true;
     options.Chains = new List<BlazorWalletConnect.Models.ChainDto>
     {
         // Replace 'YOUR_INFURA_KEY_HERE' with your actual Infura API key.

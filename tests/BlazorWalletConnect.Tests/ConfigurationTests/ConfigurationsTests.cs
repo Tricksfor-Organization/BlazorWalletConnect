@@ -34,7 +34,6 @@ public class ConfigurationsTests
             options.ThemeMode = "light";
             options.BackgroundColor = "#ffffff";
             options.AccentColor = "#000000";
-            options.EnableEmail = true;
             options.Chains = [new ChainDto(Chain.MainNet, "https://mainnet.infura.io")];
         });
 
@@ -61,7 +60,6 @@ public class ConfigurationsTests
             options.ThemeMode = "light";
             options.BackgroundColor = "#ffffff";
             options.AccentColor = "#000000";
-            options.EnableEmail = true;
             options.Chains = [new ChainDto(Chain.MainNet, "https://mainnet.infura.io")];
         }).BuildServiceProvider().GetService<IWalletConnectInterop>();
 
@@ -85,7 +83,6 @@ public class ConfigurationsTests
             options.ThemeMode = "light";
             options.BackgroundColor = "#ffffff";
             options.AccentColor = "#000000";
-            options.EnableEmail = true;
             options.Chains = [new ChainDto(Chain.MainNet, "https://mainnet.infura.io")];
         }).BuildServiceProvider().GetService<IWalletConnectInterop>();
 
@@ -109,7 +106,6 @@ public class ConfigurationsTests
             options.ThemeMode = "light";
             options.BackgroundColor = "#ffffff";
             options.AccentColor = "#000000";
-            options.EnableEmail = true;
             options.Chains = [new ChainDto(Chain.MainNet, "https://mainnet.infura.io")];
         });
 

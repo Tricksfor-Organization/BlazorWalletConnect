@@ -27,7 +27,7 @@ export async function configure(options: string, dotNetInterop: any): Promise<vo
     }
 
     const { projectId, name, description, url, termsConditionsUrl, privacyPolicyUrl, themeMode, backgroundColor, accentColor,
-        enableEmail, chainIds } = JSON.parse(options)
+        chainIds } = JSON.parse(options)
 
     // Create wagmiConfig
     const metadata = {
@@ -54,8 +54,7 @@ export async function configure(options: string, dotNetInterop: any): Promise<vo
     const config = defaultWagmiConfig({
         chains: chains as [Chain, ...Chain[]],
         projectId,
-        metadata,
-        enableEmail
+        metadata
     })
 
     walletConfig = config

@@ -34,7 +34,7 @@ function configure(options, dotNetInterop) {
         if (configured) {
             return;
         }
-        const { projectId, name, description, url, termsConditionsUrl, privacyPolicyUrl, themeMode, backgroundColor, accentColor, enableEmail, chainIds } = JSON.parse(options);
+        const { projectId, name, description, url, termsConditionsUrl, privacyPolicyUrl, themeMode, backgroundColor, accentColor, chainIds } = JSON.parse(options);
         // Create wagmiConfig
         const metadata = {
             name,
@@ -63,8 +63,7 @@ function configure(options, dotNetInterop) {
         const config = (0, wagmi_1.defaultWagmiConfig)({
             chains: chains,
             projectId,
-            metadata,
-            enableEmail
+            metadata
         });
         walletConfig = config;
         (0, core_1.reconnect)(config);

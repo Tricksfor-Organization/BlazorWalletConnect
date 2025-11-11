@@ -36,7 +36,6 @@ public class WalletConnectInteropTests
             ThemeMode = "light",
             BackgroundColor = "#ffffff",
             AccentColor = "#000000",
-            EnableEmail = true,
             Chains = [new ChainDto(Chain.MainNet, "https://mainnet.infura.io")]
         };
 

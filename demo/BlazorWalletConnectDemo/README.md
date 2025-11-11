@@ -84,7 +84,6 @@ builder.Services.AddBlazorWalletConnect(options =>
     options.ThemeMode = "dark"; // or "light"
     options.BackgroundColor = "#1a1a1a";
     options.AccentColor = "#3b82f6";
-    options.EnableEmail = true;
     options.Chains = new List<BlazorWalletConnect.Models.ChainDto>
     {
         new(Chain.MainNet, "YOUR_RPC_URL"),

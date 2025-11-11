@@ -145,7 +145,6 @@ public class WalletConnectOptionsTests
             ThemeMode = "dark",
             BackgroundColor = "#000000",
             AccentColor = "#ffffff",
-            EnableEmail = true,
             Chains = [new ChainDto(Chain.MainNet, "https://mainnet.infura.io")]
         };
 
@@ -158,7 +157,6 @@ public class WalletConnectOptionsTests
         deserialized!.ProjectId.Should().Be(options.ProjectId);
         deserialized.Name.Should().Be(options.Name);
         deserialized.ThemeMode.Should().Be("dark");
-        deserialized.EnableEmail.Should().BeTrue();
         deserialized.Chains.Should().HaveCount(1);
     }
 
@@ -177,7 +175,6 @@ public class WalletConnectOptionsTests
             ThemeMode = "light",
             BackgroundColor = "#fff",
             AccentColor = "#000",
-            EnableEmail = false,
             Chains =
             [
                 new ChainDto(Chain.MainNet, "https://mainnet.infura.io"),
@@ -208,8 +205,12 @@ public class WalletConnectOptionsTests
             ThemeMode = "auto",
             BackgroundColor = "#f0f0f0",
             AccentColor = "#ff5500",
-            EnableEmail = true,
-            Chains = []
+            Chains =
+            [
+                new ChainDto(Chain.MainNet, "https://mainnet.infura.io"),
+                new ChainDto(Chain.Polygon, "https://polygon-rpc.com"),
+                new ChainDto(Chain.Sepolia, null)
+            ]
         };
 
         // Assert
@@ -222,8 +223,7 @@ public class WalletConnectOptionsTests
         options.ThemeMode.Should().Be("auto");
         options.BackgroundColor.Should().Be("#f0f0f0");
         options.AccentColor.Should().Be("#ff5500");
-        options.EnableEmail.Should().BeTrue();
-        options.Chains.Should().BeEmpty();
+        options.Chains.Count.Should().Be(3);
     }
 }
 
