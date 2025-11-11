@@ -101,7 +101,35 @@ jobs:
           if [ -f "./publish/wwwroot/service-worker-assets.js" ]; then
             echo "✓ service-worker-assets.js found"
           else
-            echo "✗ service-worker-assets.js NOT found"
+            echo "✗ service-worker-assets.js NOT found - checking for published version"
+          fi
+          if [ -f "./publish/wwwroot/service-worker.published.js" ]; then
+            echo "✓ service-worker.published.js found"
+          else
+            echo "✗ service-worker.published.js NOT found"
+          fi
+
+      - name: Use published service worker if available
+        run: |
+          # Use the published version of service worker if it exists (it's optimized for production)
+          if [ -f "./publish/wwwroot/service-worker.published.js" ]; then
+            echo "Using service-worker.published.js as service-worker.js"
+            cp ./publish/wwwroot/service-worker.published.js ./publish/wwwroot/service-worker.js
+          fi
+          
+          # Fix globalThis to self in service worker files (service workers use 'self' not 'globalThis')
+          for sw_file in ./publish/wwwroot/service-worker*.js; do
+            if [ -f "$sw_file" ]; then
+              echo "Fixing globalThis to self in $sw_file"
+              sed -i 's/globalThis\./self./g' "$sw_file"
+              sed -i 's/globalThis,/self,/g' "$sw_file"
+            fi
+          done
+          
+          # Verify service-worker-assets.js exists, if not create a minimal one
+          if [ ! -f "./publish/wwwroot/service-worker-assets.js" ]; then
+            echo "Creating minimal service-worker-assets.js"
+            echo 'self.assetsManifest = { "assets": [], "version": "1.0.0" };' > ./publish/wwwroot/service-worker-assets.js
           fi
 
       - name: Add _headers file for proper MIME types
