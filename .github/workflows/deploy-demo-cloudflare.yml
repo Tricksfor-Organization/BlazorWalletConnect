@@ -123,6 +123,12 @@ jobs:
               echo "Fixing globalThis to self in $sw_file"
               sed -i 's/globalThis\./self./g' "$sw_file"
               sed -i 's/globalThis,/self,/g' "$sw_file"
+              
+              # Ensure importScripts is present in service-worker.js
+              if [[ "$sw_file" == *"service-worker.js" ]] && ! grep -q "importScripts" "$sw_file"; then
+                echo "Adding importScripts to $sw_file"
+                sed -i '3a self.importScripts('\''./service-worker-assets.js'\'');' "$sw_file"
+              fi
             fi
           done
           
