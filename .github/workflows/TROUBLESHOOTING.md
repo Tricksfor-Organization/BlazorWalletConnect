@@ -314,14 +314,64 @@ threw an exception during script evaluation.
 ```
 
 **Cause:**
-Service worker file is being served as `text/html` or with wrong MIME type.
+Service worker file is being served as `text/html` or `service-worker-assets.js` is not loading correctly due to redirect rules catching static files.
 
 **Solution:**
 
-Already fixed in updated workflow. The workflow now:
-1. Explicitly serves `/service-worker.js` with correct MIME type
-2. Excludes it from SPA redirect rules
-3. Sets proper cache headers
+Already fixed in updated workflow v3. The workflow now:
+1. Uses force rules (`200!`) in `_redirects` to prevent catching static files
+2. Explicitly serves `/service-worker.js` and `/service-worker-assets.js`
+3. Adds error handling to service worker registration
+4. Uses specific patterns for all static file types
+
+**Updated `_redirects` file:**
+```
+# Static files with force (!) to prevent further processing
+/service-worker.js    200!
+/service-worker-assets.js    200!
+/*.js    200!
+/*.dll    200!
+/*.wasm    200!
+/*    /index.html   200
+```
+
+**Manual fix if issue persists:**
+
+1. **Clear browser service worker:**
+   ```
+   F12 → Application → Service Workers
+   Click "Unregister" for old service worker
+   Close and reopen browser
+   ```
+
+2. **Hard refresh:**
+   ```
+   Ctrl+Shift+R (Windows/Linux)
+   Cmd+Shift+R (Mac)
+   ```
+
+3. **Verify files are accessible:**
+   ```
+   https://blazorwalletconnect-demo.pages.dev/service-worker.js
+   https://blazorwalletconnect-demo.pages.dev/service-worker-assets.js
+   
+   Both should return JavaScript, not HTML
+   ```
+
+4. **Check Content-Type headers:**
+   ```
+   F12 → Network → Reload
+   Click on service-worker.js
+   Check Response Headers:
+   - Content-Type: application/javascript ✓
+   - Not: text/html ✗
+   ```
+
+5. **If still failing, disable service worker temporarily:**
+   ```
+   Edit index.html and comment out:
+   <!-- <script>navigator.serviceWorker.register('service-worker.js');</script> -->
+   ```
 
 After re-deployment:
 1. Unregister old service worker in browser DevTools

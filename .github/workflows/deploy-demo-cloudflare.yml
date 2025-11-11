@@ -72,7 +72,7 @@ jobs:
 
       - name: Inject WalletConnect ProjectId into appsettings
         env:
-          WALLETCONNECT_PROJECT_ID: ${{ secrets.WALLETCONNECT_PROJECT_ID }}
+          WALLETCONNECT_PROJECT_ID: ${{ secrets.DEMO_WALLETCONNECT_PROJECT_ID }}
         run: |
           # Update appsettings.json with the ProjectId from GitHub secrets
           if [ -f "./publish/wwwroot/appsettings.json" ]; then
@@ -91,6 +91,18 @@ jobs:
           # Cloudflare Pages serves from root by default
           echo "Checking published files..."
           ls -la ./publish/wwwroot/
+          echo ""
+          echo "Checking for service worker files..."
+          if [ -f "./publish/wwwroot/service-worker.js" ]; then
+            echo "✓ service-worker.js found"
+          else
+            echo "✗ service-worker.js NOT found"
+          fi
+          if [ -f "./publish/wwwroot/service-worker-assets.js" ]; then
+            echo "✓ service-worker-assets.js found"
+          else
+            echo "✗ service-worker-assets.js NOT found"
+          fi
 
       - name: Add _headers file for proper MIME types
         run: |
@@ -147,20 +159,32 @@ jobs:
       - name: Add _redirects file for SPA routing
         run: |
           cat > ./publish/wwwroot/_redirects << 'EOF'
-          # Serve static files directly
-          /css/*    200
-          /js/*     200
-          /_framework/*    200
-          /_content/*    200
-          /service-worker.js    200
-          /service-worker-assets.js    200
-          /manifest.json    200
-          /icon-*.png    200
-          /favicon.ico    200
+          # Static files - serve directly without redirect
+          /css/*    200!
+          /js/*     200!
+          /_framework/*    200!
+          /_content/*    200!
+          /service-worker.js    200!
+          /service-worker-assets.js    200!
+          /manifest.json    200!
+          /icon-*.png    200!
+          /favicon.ico    200!
+          /*.css    200!
+          /*.js    200!
+          /*.dll    200!
+          /*.wasm    200!
+          /*.json    200!
+          /*.png    200!
+          /*.ico    200!
           
           # SPA fallback - serve index.html for everything else
           /*    /index.html   200
           EOF
+
+      - name: Add error handling to service worker registration
+        run: |
+          # Update index.html to have better error handling for service worker
+          sed -i 's|<script>navigator.serviceWorker.register('"'"'service-worker.js'"'"');</script>|<script>if ('"'"'serviceWorker'"'"' in navigator) { navigator.serviceWorker.register('"'"'service-worker.js'"'"').catch(err => console.log('"'"'Service worker registration failed:'"'"', err)); }</script>|g' ./publish/wwwroot/index.html
 
       - name: Install Wrangler CLI
         run: npm install -g wrangler
