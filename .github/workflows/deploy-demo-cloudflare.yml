@@ -1,0 +1,157 @@
+name: Deploy Demo to Cloudflare Pages
+
+env:
+  DEMO_PROJECT_PATH: demo/BlazorWalletConnectDemo
+  DEMO_PROJECT_NAME: BlazorWalletConnectDemo
+
+on:
+  release:
+    types: [published, created]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: false
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - preview
+
+permissions:
+  contents: read
+  deployments: write
+
+jobs:
+  build-and-deploy:
+    name: Build and Deploy Demo to Cloudflare Pages
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/Directory.Packages.props', '**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Cache npm packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build library project
+        run: dotnet build src/BlazorWalletConnect/BlazorWalletConnect.csproj --configuration Release --no-restore
+
+      - name: Publish demo application
+        run: |
+          dotnet publish ${{ env.DEMO_PROJECT_PATH }}/${{ env.DEMO_PROJECT_NAME }}.csproj \
+            --configuration Release \
+            --output ./publish \
+            --no-restore
+
+      - name: Configure base path for Cloudflare Pages
+        run: |
+          # Update index.html to use correct base path
+          # Cloudflare Pages serves from root by default
+          echo "Checking published files..."
+          ls -la ./publish/wwwroot/
+
+      - name: Add _headers file for proper MIME types
+        run: |
+          cat > ./publish/wwwroot/_headers << 'EOF'
+          /*
+            X-Frame-Options: SAMEORIGIN
+            X-Content-Type-Options: nosniff
+            Referrer-Policy: strict-origin-when-cross-origin
+
+          /*.dll
+            Content-Type: application/wasm
+            Cache-Control: public, max-age=31536000, immutable
+
+          /*.wasm
+            Content-Type: application/wasm
+            Cache-Control: public, max-age=31536000, immutable
+
+          /*.js
+            Content-Type: application/javascript
+            Cache-Control: public, max-age=31536000, immutable
+
+          /*.json
+            Content-Type: application/json
+            Cache-Control: public, max-age=3600
+
+          /service-worker.js
+            Content-Type: application/javascript
+            Cache-Control: public, max-age=0, must-revalidate
+          EOF
+
+      - name: Add _redirects file for SPA routing
+        run: |
+          cat > ./publish/wwwroot/_redirects << 'EOF'
+          # SPA fallback - serve index.html for all non-file requests
+          /*    /index.html   200
+          EOF
+
+      - name: Publish to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: blazorwalletconnect-demo
+          directory: ./publish/wwwroot
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.head_ref || github.ref_name }}
+          wranglerVersion: '3'
+
+      - name: Output deployment URL
+        run: |
+          echo "🚀 Demo deployed to production: https://blazorwalletconnect-demo.pages.dev"
+          if [ -n "${{ github.event.release.tag_name }}" ]; then
+            echo "� Release version: ${{ github.event.release.tag_name }}"
+          fi
+
+      - name: Create deployment summary
+        run: |
+          cat >> $GITHUB_STEP_SUMMARY << 'EOF'
+          ## 🎉 Demo Deployment Successful
+
+          ### Deployment Details
+          - **Release:** ${{ github.event.release.tag_name || 'Manual Deployment' }}
+          - **Release Name:** ${{ github.event.release.name || 'N/A' }}
+          - **Commit:** ${{ github.sha }}
+          - **Triggered by:** ${{ github.event_name }}
+
+          ### URLs
+          - **Production URL:** https://blazorwalletconnect-demo.pages.dev
+          - **Project Dashboard:** https://dash.cloudflare.com/
+
+          ### Release Notes
+          ${{ github.event.release.body || 'No release notes provided' }}
+
+          ### Next Steps
+          1. Test the deployed application
+          2. Verify wallet connectivity
+          3. Check browser console for any errors
+          4. Validate new features from the release
+          EOF

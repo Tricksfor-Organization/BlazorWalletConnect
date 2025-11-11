@@ -7,6 +7,12 @@
 
 A powerful Blazor WebAssembly library for integrating WalletConnect into your Web3 applications. Supports multiple blockchain networks including Ethereum, Polygon, Arbitrum, Optimism, BSC and more.
 
+## 🌐 Live Demo
+
+Try the live demo: **[blazorwalletconnect-demo.pages.dev](https://blazorwalletconnect-demo.pages.dev)**
+
+The demo showcases all library features including wallet connection, balance queries, transactions, and more. Connect your wallet and explore the capabilities!
+
 ## ✨ Features
 
 - 🔌 **Easy WalletConnect Integration** - Connect to 300+ wallets with a few lines of code
@@ -375,6 +381,20 @@ dotnet test
 cd demo/BlazorWalletConnectDemo
 dotnet run
 ```
+
+### Deploy Demo to Cloudflare Pages
+
+The demo application can be automatically deployed to Cloudflare Pages:
+
+1. **Quick Setup** - See [.github/workflows/QUICKSTART-CLOUDFLARE.md](.github/workflows/QUICKSTART-CLOUDFLARE.md)
+2. **Full Documentation** - See [.github/workflows/README-CLOUDFLARE.md](.github/workflows/README-CLOUDFLARE.md)
+
+The deployment workflow:
+- ✅ Automatically triggers when you publish a new release
+- ✅ Builds and publishes the Blazor WASM app
+- ✅ Configures proper headers and SPA routing
+- ✅ Deploys to Cloudflare's global CDN
+- ✅ Provides instant worldwide access
 
 ## 📋 Requirements
 

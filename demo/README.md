@@ -2,6 +2,12 @@
 
 This folder contains a sample Blazor PWA application demonstrating the usage of BlazorWalletConnect.
 
+## 🌐 Live Demo
+
+**Try it live:** [blazorwalletconnect-demo.pages.dev](https://blazorwalletconnect-demo.pages.dev)
+
+The demo is automatically deployed to Cloudflare Pages whenever a new release is published.
+
 ## Quick Start
 
 ```bash
