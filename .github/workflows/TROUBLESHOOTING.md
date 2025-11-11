@@ -271,6 +271,65 @@ If still having issues:
 
 ---
 
+### Warning: "CSS/JS MIME type errors"
+
+**Symptoms:**
+```
+The resource from "https://blazorwalletconnect-demo.pages.dev/css/app.css" 
+was blocked due to MIME type ("text/html") mismatch (X-Content-Type-Options: nosniff).
+```
+
+**Cause:**
+Static files are being served as `text/html` instead of correct MIME type. This happens when `_redirects` catches static files.
+
+**Solution:**
+
+Already fixed in updated workflow - the workflow now:
+1. Creates proper `_headers` with CSS/JS MIME types
+2. Creates `_redirects` that excludes static file paths
+
+The updated `_redirects` file:
+```
+/css/*    200
+/js/*     200
+/_framework/*    200
+/_content/*    200
+/service-worker.js    200
+/*    /index.html   200
+```
+
+If still having issues:
+1. Re-deploy the application
+2. Hard refresh browser (Ctrl+Shift+R)
+3. Clear Cloudflare cache in dashboard
+
+---
+
+### Warning: "Service Worker errors"
+
+**Symptoms:**
+```
+ServiceWorker script at https://blazorwalletconnect-demo.pages.dev/service-worker.js 
+threw an exception during script evaluation.
+```
+
+**Cause:**
+Service worker file is being served as `text/html` or with wrong MIME type.
+
+**Solution:**
+
+Already fixed in updated workflow. The workflow now:
+1. Explicitly serves `/service-worker.js` with correct MIME type
+2. Excludes it from SPA redirect rules
+3. Sets proper cache headers
+
+After re-deployment:
+1. Unregister old service worker in browser DevTools
+2. Hard refresh (Ctrl+Shift+R)
+3. Check Application → Service Workers in DevTools
+
+---
+
 ### Deployment succeeds but site shows old version
 
 **Symptoms:**
