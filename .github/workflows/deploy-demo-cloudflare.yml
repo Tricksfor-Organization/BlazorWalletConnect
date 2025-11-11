@@ -92,6 +92,14 @@ jobs:
           echo "Checking published files..."
           ls -la ./publish/wwwroot/
           echo ""
+          echo "Checking CSS directory..."
+          if [ -d "./publish/wwwroot/css" ]; then
+            echo "✓ css directory found"
+            ls -la ./publish/wwwroot/css/
+          else
+            echo "✗ css directory NOT found"
+          fi
+          echo ""
           echo "Checking for service worker files..."
           if [ -f "./publish/wwwroot/service-worker.js" ]; then
             echo "✓ service-worker.js found"
@@ -101,41 +109,12 @@ jobs:
           if [ -f "./publish/wwwroot/service-worker-assets.js" ]; then
             echo "✓ service-worker-assets.js found"
           else
-            echo "✗ service-worker-assets.js NOT found - checking for published version"
+            echo "✗ service-worker-assets.js NOT found"
           fi
           if [ -f "./publish/wwwroot/service-worker.published.js" ]; then
             echo "✓ service-worker.published.js found"
           else
             echo "✗ service-worker.published.js NOT found"
-          fi
-
-      - name: Use published service worker if available
-        run: |
-          # Use the published version of service worker if it exists (it's optimized for production)
-          if [ -f "./publish/wwwroot/service-worker.published.js" ]; then
-            echo "Using service-worker.published.js as service-worker.js"
-            cp ./publish/wwwroot/service-worker.published.js ./publish/wwwroot/service-worker.js
-          fi
-          
-          # Fix globalThis to self in service worker files (service workers use 'self' not 'globalThis')
-          for sw_file in ./publish/wwwroot/service-worker*.js; do
-            if [ -f "$sw_file" ]; then
-              echo "Fixing globalThis to self in $sw_file"
-              sed -i 's/globalThis\./self./g' "$sw_file"
-              sed -i 's/globalThis,/self,/g' "$sw_file"
-              
-              # Ensure importScripts is present in service-worker.js
-              if [[ "$sw_file" == *"service-worker.js" ]] && ! grep -q "importScripts" "$sw_file"; then
-                echo "Adding importScripts to $sw_file"
-                sed -i '3a self.importScripts('\''./service-worker-assets.js'\'');' "$sw_file"
-              fi
-            fi
-          done
-          
-          # Verify service-worker-assets.js exists, if not create a minimal one
-          if [ ! -f "./publish/wwwroot/service-worker-assets.js" ]; then
-            echo "Creating minimal service-worker-assets.js"
-            echo 'self.assetsManifest = { "assets": [], "version": "1.0.0" };' > ./publish/wwwroot/service-worker-assets.js
           fi
 
       - name: Add _headers file for proper MIME types
@@ -193,23 +172,23 @@ jobs:
       - name: Add _redirects file for SPA routing
         run: |
           cat > ./publish/wwwroot/_redirects << 'EOF'
-          # Static files - serve directly without redirect
-          /css/*    200!
-          /js/*     200!
-          /_framework/*    200!
-          /_content/*    200!
-          /service-worker.js    200!
-          /service-worker-assets.js    200!
-          /manifest.json    200!
-          /icon-*.png    200!
-          /favicon.ico    200!
-          /*.css    200!
-          /*.js    200!
-          /*.dll    200!
-          /*.wasm    200!
-          /*.json    200!
-          /*.png    200!
-          /*.ico    200!
+          # Static files - serve directly without redirect (order matters!)
+          /css/*    200
+          /js/*     200
+          /_framework/*    200
+          /_content/*    200
+          /service-worker.js    200
+          /service-worker-assets.js    200
+          /manifest.json    200
+          /icon-*.png    200
+          /favicon.ico    200
+          /*.css    200
+          /*.js    200
+          /*.dll    200
+          /*.wasm    200
+          /*.json    200
+          /*.png    200
+          /*.ico    200
           
           # SPA fallback - serve index.html for everything else
           /*    /index.html   200
