@@ -7,7 +7,7 @@ namespace BlazorWalletConnect.Helpers;
 public static class TransactionHelper
 {
     /// <summary>
-    /// Creates a TransactionInput suitable for interacting with a smart contract for use with <see cref="IWeb3ModalInterop.SendTransaction(TransactionInput)"/>
+    /// Creates a TransactionInput suitable for interacting with a smart contract for use with <see cref="IWalletConnectInterop.SendTransaction(TransactionInput)"/>
     /// </summary>
     /// <typeparam name="T">The type of the function message</typeparam>
     /// <param name="request">The request to send</param>

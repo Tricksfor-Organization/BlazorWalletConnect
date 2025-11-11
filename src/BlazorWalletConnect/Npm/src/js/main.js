@@ -21,7 +21,8 @@ exports.getTokenOfOwnerByIndex = getTokenOfOwnerByIndex;
 exports.getOwnerOf = getOwnerOf;
 exports.getStakedTokens = getStakedTokens;
 exports.switchChainId = switchChainId;
-const wagmi_1 = require("@web3modal/wagmi");
+const appkit_1 = require("@reown/appkit");
+const appkit_adapter_wagmi_1 = require("@reown/appkit-adapter-wagmi");
 const chains_1 = require("viem/chains");
 const core_1 = require("@wagmi/core");
 const viem_1 = require("viem");
@@ -60,23 +61,26 @@ function configure(options, dotNetInterop) {
             chainId: item.chainId,
             rpcUrl: item.rpcUrl
         }));
-        const config = (0, wagmi_1.defaultWagmiConfig)({
-            chains: chains,
-            projectId,
-            metadata
+        // Create Wagmi adapter
+        const wagmiAdapter = new appkit_adapter_wagmi_1.WagmiAdapter({
+            networks: chains,
+            projectId
         });
-        walletConfig = config;
-        (0, core_1.reconnect)(config);
-        // Create modal
-        (0, wagmi_1.createWeb3Modal)({
-            wagmiConfig: config,
+        walletConfig = wagmiAdapter.wagmiConfig;
+        (0, core_1.reconnect)(walletConfig);
+        // Create AppKit modal
+        const modal = (0, appkit_1.createAppKit)({
+            adapters: [wagmiAdapter],
+            networks: chains,
             projectId,
-            enableAnalytics: true, // Optional - defaults to your Cloud configuration
-            enableOnramp: true, // Optional - false as default
+            metadata,
+            features: {
+                analytics: true,
+                onramp: true
+            },
             termsConditionsUrl,
-            defaultChain: chains[0],
             privacyPolicyUrl,
-            themeMode,
+            themeMode: themeMode,
             themeVariables: {
                 '--w3m-color-mix': backgroundColor,
                 '--w3m-accent': accentColor

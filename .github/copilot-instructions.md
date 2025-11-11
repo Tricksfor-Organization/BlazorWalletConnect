@@ -9,7 +9,7 @@ BlazorWalletConnect is a Blazor WebAssembly library that integrates WalletConnec
 - **Framework**: .NET 9.0, Blazor WebAssembly
 - **Language**: C# 12, TypeScript 5.x
 - **Package Manager**: NuGet (with Central Package Management)
-- **JavaScript**: Web3Modal, Wagmi, Viem
+- **JavaScript**: Reown AppKit (formerly Web3Modal), Wagmi, Viem
 - **Testing**: NUnit 4.4, NSubstitute 5.3, FluentAssertions 8.8, bUnit 1.32
 - **Build**: MSBuild, npm/webpack
 
@@ -405,7 +405,7 @@ export async function sendTransaction(input: string) {
 ## Resources
 
 - [WalletConnect Documentation](https://docs.walletconnect.com/)
-- [Web3Modal Documentation](https://docs.web3modal.com/)
+- [Reown AppKit Documentation](https://docs.reown.com/appkit) (formerly Web3Modal)
 - [Nethereum Documentation](https://docs.nethereum.com/)
 - [Blazor Documentation](https://docs.microsoft.com/aspnet/core/blazor/)
 - [NUnit Documentation](https://docs.nunit.org/)

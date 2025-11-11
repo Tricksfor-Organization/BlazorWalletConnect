@@ -486,7 +486,6 @@ dist
 # Blazor generated files
 **/wwwroot/dist/
 **/wwwroot/js/
-**/wwwroot/css/
 **/wwwroot/_framework/
 blazor.boot.json
 

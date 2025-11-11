@@ -1,4 +1,5 @@
-import { createWeb3Modal, defaultWagmiConfig } from '@web3modal/wagmi'
+import { createAppKit } from '@reown/appkit'
+import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
 import { polygon, mainnet, arbitrum, optimism, bsc, Chain } from 'viem/chains'
 import {
     reconnect, disconnect, Config, getAccount, getBalance, GetAccountReturnType,
@@ -51,26 +52,29 @@ export async function configure(options: string, dotNetInterop: any): Promise<vo
         rpcUrl: item.rpcUrl
     }))
 
-    const config = defaultWagmiConfig({
-        chains: chains as [Chain, ...Chain[]],
-        projectId,
-        metadata
+    // Create Wagmi adapter
+    const wagmiAdapter = new WagmiAdapter({
+        networks: chains as [Chain, ...Chain[]],
+        projectId
     })
 
-    walletConfig = config
+    walletConfig = wagmiAdapter.wagmiConfig
 
-    reconnect(config)
+    reconnect(walletConfig)
 
-    // Create modal
-    createWeb3Modal({
-        wagmiConfig: config,
+    // Create AppKit modal
+    createAppKit({
+        adapters: [wagmiAdapter],
+        networks: chains as [Chain, ...Chain[]],
         projectId,
-        enableAnalytics: true, // Optional - defaults to your Cloud configuration
-        enableOnramp: true, // Optional - false as default
+        metadata,
+        features: {
+            analytics: true,
+            onramp: true
+        },
         termsConditionsUrl,
-        defaultChain: chains[0],
         privacyPolicyUrl,
-        themeMode,
+        themeMode: themeMode,
         themeVariables: {
             '--w3m-color-mix': backgroundColor,
             '--w3m-accent': accentColor

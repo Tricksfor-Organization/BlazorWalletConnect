@@ -33,7 +33,7 @@
 
 
 	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-		<Exec Command="npm install" WorkingDirectory="Npm" />
+		<Exec Command="npm install --legacy-peer-deps" WorkingDirectory="Npm" />
 		<Exec Command="npm run buildDebug" WorkingDirectory="Npm" Condition="'$(Configuration)' == 'Debug'" />
 		<Exec Command="npm run build" WorkingDirectory="Npm" Condition="'$(Configuration)' == 'Release'" />
 	</Target>
