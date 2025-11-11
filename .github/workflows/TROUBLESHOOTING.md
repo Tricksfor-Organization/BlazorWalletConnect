@@ -330,6 +330,39 @@ After re-deployment:
 
 ---
 
+### Error: "WalletConnect ProjectId is not configured"
+
+**Error Message:**
+```
+InvalidOperationException: WalletConnect ProjectId is not configured.
+```
+
+**Cause:**
+The WalletConnect Project ID is missing or not properly injected during build.
+
+**Solution:**
+
+1. **Add GitHub Secret:**
+   - Go to repository **Settings** → **Secrets and variables** → **Actions**
+   - Click **New repository secret**
+   - Name: `WALLETCONNECT_PROJECT_ID`
+   - Value: Your Project ID from [WalletConnect Cloud](https://cloud.walletconnect.com/)
+
+2. **Verify workflow injects the value:**
+   - Check workflow includes "Inject WalletConnect ProjectId" step
+   - Workflow should update `appsettings.json` during build
+
+3. **Get WalletConnect Project ID:**
+   - Visit [WalletConnect Cloud](https://cloud.walletconnect.com/)
+   - Sign up or log in
+   - Create a new project
+   - Copy the Project ID
+   - Add it to GitHub secrets
+
+**Note:** Cloudflare Pages environment variables won't work for Blazor WASM apps since they run in the browser. The workflow injects the ProjectId during build time instead.
+
+---
+
 ### Deployment succeeds but site shows old version
 
 **Symptoms:**

@@ -26,9 +26,10 @@
 Repository → Settings → Secrets and variables → Actions → New repository secret
 ```
 
-Add these two secrets:
+Add these three secrets:
 - `CLOUDFLARE_API_TOKEN` → Your API token from step 1
 - `CLOUDFLARE_ACCOUNT_ID` → Your Account ID from step 1
+- `WALLETCONNECT_PROJECT_ID` → Your WalletConnect Project ID from [cloud.walletconnect.com](https://cloud.walletconnect.com/)
 
 ### 3. Deploy
 

@@ -25,7 +25,8 @@ Use this checklist to ensure your Cloudflare Pages deployment is set up correctl
 - [ ] Navigated to Settings → Secrets and variables → Actions
 - [ ] Added secret: `CLOUDFLARE_API_TOKEN` with your API token
 - [ ] Added secret: `CLOUDFLARE_ACCOUNT_ID` with your Account ID
-- [ ] Verified both secrets are saved
+- [ ] Added secret: `WALLETCONNECT_PROJECT_ID` with your WalletConnect Project ID
+- [ ] Verified all three secrets are saved
 
 ### Repository Files
 - [ ] Workflow file exists: `.github/workflows/deploy-demo-cloudflare.yml`

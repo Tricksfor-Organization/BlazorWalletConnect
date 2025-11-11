@@ -70,6 +70,21 @@ jobs:
             --output ./publish \
             --no-restore
 
+      - name: Inject WalletConnect ProjectId into appsettings
+        env:
+          WALLETCONNECT_PROJECT_ID: ${{ secrets.WALLETCONNECT_PROJECT_ID }}
+        run: |
+          # Update appsettings.json with the ProjectId from GitHub secrets
+          if [ -f "./publish/wwwroot/appsettings.json" ]; then
+            echo "Injecting WalletConnect ProjectId into appsettings.json"
+            jq --arg projectId "$WALLETCONNECT_PROJECT_ID" \
+              '.WalletConnect.ProjectId = $projectId' \
+              ./publish/wwwroot/appsettings.json > ./publish/wwwroot/appsettings.tmp.json
+            mv ./publish/wwwroot/appsettings.tmp.json ./publish/wwwroot/appsettings.json
+          else
+            echo "Warning: appsettings.json not found"
+          fi
+
       - name: Configure base path for Cloudflare Pages
         run: |
           # Update index.html to use correct base path

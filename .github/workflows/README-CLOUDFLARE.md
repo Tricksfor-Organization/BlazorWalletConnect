@@ -64,6 +64,12 @@ The workflow will automatically create the project on first deployment if it doe
    - Name: `CLOUDFLARE_ACCOUNT_ID`
    - Value: Your Cloudflare Account ID from Step 2
 
+   **Secret 3:**
+   - Name: `WALLETCONNECT_PROJECT_ID`
+   - Value: Your WalletConnect Project ID from [WalletConnect Cloud](https://cloud.walletconnect.com/)
+
+> **Note:** The `WALLETCONNECT_PROJECT_ID` will be injected into the demo application during build time.
+
 ### Step 5: Configure Project Name (Optional)
 
 By default, the project name is `blazorwalletconnect-demo`. To change it:
