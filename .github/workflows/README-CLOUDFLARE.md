@@ -17,11 +17,20 @@ The deployment workflow automatically builds and publishes the Blazor WebAssembl
 
 ### Step 1: Create Cloudflare Pages Project
 
+**Option A: Automatic Creation (Recommended)**
+
+The workflow will automatically create the project on first deployment if it doesn't exist.
+
+**Option B: Manual Creation**
+
 1. Log in to your [Cloudflare Dashboard](https://dash.cloudflare.com/)
 2. Navigate to **Pages** in the left sidebar
 3. Click **Create a project**
-4. You can create an empty project named `blazorwalletconnect-demo`
-   - Or let the GitHub Action create it automatically on first deployment
+4. Select **Direct Upload**
+5. Enter project name: `blazorwalletconnect-demo`
+6. Click **Create project**
+
+**Note:** The project name must match `blazorwalletconnect-demo` in the workflow file, or update the workflow to use your custom name.
 
 ### Step 2: Get Cloudflare Account ID
 
@@ -141,9 +150,10 @@ The workflow automatically creates two configuration files:
    - Check that the secret is correctly named `CLOUDFLARE_API_TOKEN`
 
 2. **"Project not found" Error**
-   - The project will be created automatically on first deployment
-   - Or manually create the project in Cloudflare Pages dashboard
-   - Ensure project name matches in the workflow file
+   - The workflow will attempt to create the project automatically
+   - If it fails, manually create the project in Cloudflare Pages dashboard
+   - Ensure project name matches `blazorwalletconnect-demo` in the workflow file
+   - Or update the workflow with your custom project name
 
 3. **"Account ID invalid" Error**
    - Double-check your Account ID from Cloudflare dashboard

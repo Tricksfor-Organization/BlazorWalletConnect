@@ -39,6 +39,7 @@ Add these two secrets:
 3. Create tag (e.g., v1.0.0)
 4. Add release notes
 5. Click "Publish release"
+6. Workflow creates project and deploys automatically
 ```
 
 **Option B - Manual:** 
@@ -46,7 +47,10 @@ Add these two secrets:
 1. Go to GitHub Actions tab
 2. Select "Deploy Demo to Cloudflare Pages"
 3. Click "Run workflow"
+4. Project will be created automatically if needed
 ```
+
+**Note:** The Cloudflare Pages project will be created automatically on first deployment.
 
 ### 4. Access Your Demo
 
