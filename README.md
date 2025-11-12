@@ -419,7 +419,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - [WalletConnect](https://walletconnect.com/) - For the Web3 wallet connection protocol
 - [Nethereum](https://nethereum.com/) - For Ethereum .NET integration
-- [Web3Modal](https://web3modal.com/) - For the beautiful wallet connection UI
+- [Reown AppKit](https://docs.reown.com/appkit) - For the beautiful wallet connection UI (formerly Web3Modal)
 
 ## 🔗 Links
 

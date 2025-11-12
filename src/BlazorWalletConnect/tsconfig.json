@@ -1,12 +1,4 @@
 {
-  //"compilerOptions": {
-  //  "module": "CommonJS",
-  //  "target": "ES6",
-  //  "sourceMap": true
-  //},
-  //"exclude": [
-  //  "node_modules"
-  //]
   "compilerOptions": {
     "target": "ES6",
     "module": "CommonJS",
@@ -14,6 +6,16 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "skipLibCheck": true,
-    "sourceMap": true
-  }
+    "sourceMap": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true
+  },
+  "include": [
+    "Npm/src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "Npm/node_modules"
+  ]
 }
