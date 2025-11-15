@@ -3,7 +3,7 @@
 [![NuGet](https://img.shields.io/nuget/v/Tricksfor.BlazorWalletConnect.svg)](https://www.nuget.org/packages/Tricksfor.BlazorWalletConnect/)
 [![NuGet Downloads](https://img.shields.io/nuget/dt/Tricksfor.BlazorWalletConnect.svg)](https://www.nuget.org/packages/Tricksfor.BlazorWalletConnect/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![.NET](https://img.shields.io/badge/.NET-9.*.*-blue.svg)](https://dotnet.microsoft.com/download)
+[![.NET](https://img.shields.io/badge/.NET-9_|_10-blue.svg)](https://dotnet.microsoft.com/download)
 
 A powerful Blazor WebAssembly library for integrating WalletConnect into your Web3 applications. Supports multiple blockchain networks including Ethereum, Polygon, Arbitrum, Optimism, BSC and more.
 
@@ -28,22 +28,34 @@ The demo showcases all library features including wallet connection, balance que
 
 ## 📦 Installation
 
-### Via NuGet Package Manager
+### NuGet Package
 
 ```bash
 dotnet add package Tricksfor.BlazorWalletConnect
 ```
 
+### Version Compatibility
+
+**Important:** Choose the package version that matches your .NET version:
+
+- **.NET 9**: Use version `9.x.x`
+  ```xml
+  <PackageReference Include="Tricksfor.BlazorWalletConnect" Version="9.*" />
+  ```
+
+- **.NET 10**: Use version `10.x.x`
+  ```xml
+  <PackageReference Include="Tricksfor.BlazorWalletConnect" Version="10.*" />
+  ```
+
 ### Via Package Manager Console
 
 ```powershell
-Install-Package Tricksfor.BlazorWalletConnect
-```
+# For .NET 9
+Install-Package Tricksfor.BlazorWalletConnect -Version 9.*
 
-### Via .csproj
-
-```xml
-<PackageReference Include="Tricksfor.BlazorWalletConnect" Version="9.*.*" />
+# For .NET 10
+Install-Package Tricksfor.BlazorWalletConnect -Version 10.*
 ```
 
 ## 🚀 Quick Start

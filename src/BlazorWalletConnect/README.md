@@ -19,6 +19,20 @@ A modern Blazor WebAssembly library for integrating WalletConnect into your Web3
 dotnet add package Tricksfor.BlazorWalletConnect
 ```
 
+### Version Compatibility
+
+Choose the package version that matches your .NET version:
+
+- **.NET 9**: Use version `9.x`
+  ```bash
+  dotnet add package Tricksfor.BlazorWalletConnect --version 9.*
+  ```
+
+- **.NET 10**: Use version `10.x`
+  ```bash
+  dotnet add package Tricksfor.BlazorWalletConnect --version 10.*
+  ```
+
 ## Quick Start
 
 ### 1. Get WalletConnect Project ID
