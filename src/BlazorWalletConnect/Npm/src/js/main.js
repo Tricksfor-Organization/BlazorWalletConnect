@@ -69,7 +69,7 @@ function configure(options, dotNetInterop) {
         walletConfig = wagmiAdapter.wagmiConfig;
         (0, core_1.reconnect)(walletConfig);
         // Create AppKit modal
-        const modal = (0, appkit_1.createAppKit)({
+        (0, appkit_1.createAppKit)({
             adapters: [wagmiAdapter],
             networks: chains,
             projectId,
