@@ -116,6 +116,15 @@ jobs:
       - name: List generated JS files
         run: ls -R ./src/BlazorWalletConnect/wwwroot
 
+      - name: Restore Workloads
+        run: dotnet workload restore
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build solution
+        run: dotnet build --configuration Release --no-restore
+
       - name: Compute package version from release tag
         run: |
           # Use the release tag as the package version. Strip a leading 'v' if present.
