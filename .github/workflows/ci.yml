@@ -5,6 +5,8 @@ env:
   NUGET_PACKAGE_PREFIX: ${{ secrets.NUGET_PACKAGE_PREFIX }}
   NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
   APPLICATION_NAME: BlazorWalletConnect
+  DOTNET_VERSION: 10.0.x
+  NODE_VERSION: 20.x
 
 
 on:
@@ -33,12 +35,12 @@ jobs:
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '9.0.x'
+          dotnet-version: '${{ env.DOTNET_VERSION }}'
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: '${{ env.NODE_VERSION }}'
 
       - name: Cache NuGet packages
         uses: actions/cache@v4
@@ -91,12 +93,12 @@ jobs:
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '9.0.x'
+          dotnet-version: '${{ env.DOTNET_VERSION }}'
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: '${{ env.NODE_VERSION }}'
 
       - name: Restore dependencies
         run: dotnet restore
@@ -133,11 +135,11 @@ jobs:
 
           if [ -n "${PACKAGE_VERSION:-}" ]; then
             dotnet pack src/${{ env.APPLICATION_NAME }}/${{ env.APPLICATION_NAME }}.csproj \
-              -c Release -o ./nupkgs --no-build \
+              -c Release -o ./nupkgs \
               /p:PackageVersion=$PACKAGE_VERSION /p:PackageId="$PACKAGE_ID"
           else
             dotnet pack src/${{ env.APPLICATION_NAME }}/${{ env.APPLICATION_NAME }}.csproj \
-              -c Release -o ./nupkgs --no-build \
+              -c Release -o ./nupkgs \
               /p:PackageId="$PACKAGE_ID"
           fi
 
@@ -167,7 +169,7 @@ jobs:
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '9.0.x'
+          dotnet-version: '${{ env.DOTNET_VERSION }}'
 
       - name: Restore dependencies
         run: dotnet restore
