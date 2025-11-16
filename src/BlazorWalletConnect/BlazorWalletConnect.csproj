@@ -29,9 +29,8 @@
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		
+		<PackageReference Include="Newtonsoft.Json" />
 	</ItemGroup>
-
 
 	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
 		<Exec Command="npm install --legacy-peer-deps" WorkingDirectory="Npm" />
