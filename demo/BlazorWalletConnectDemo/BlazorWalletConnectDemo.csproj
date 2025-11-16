@@ -6,6 +6,12 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
     <UserSecretsId>f76e833e-b688-41e5-9d7f-d40dd4f1f7ce</UserSecretsId>
+
+     <BlazorEnableTimeZoneSupport>false</BlazorEnableTimeZoneSupport>
+	  <BlazorWebAssemblyPreserveCollationData>false</BlazorWebAssemblyPreserveCollationData>
+	  <InvariantGlobalization>true</InvariantGlobalization>
+	  <WasmEnableExceptionHandling>true</WasmEnableExceptionHandling>
+	  <PublishTrimmed>true</PublishTrimmed>
   </PropertyGroup>
 
   <ItemGroup>
