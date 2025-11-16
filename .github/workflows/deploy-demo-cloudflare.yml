@@ -5,6 +5,8 @@ env:
   DEMO_PROJECT_NAME: BlazorWalletConnectDemo
 
 on:
+  push:
+    branches: ['**']
   release:
     types: [published, created]
   workflow_dispatch:
@@ -61,7 +63,7 @@ jobs:
         run: dotnet restore
 
       - name: Build library project
-        run: dotnet build src/BlazorWalletConnect/BlazorWalletConnect.csproj --configuration Release --no-restore
+        run: dotnet build ${{ env.DEMO_PROJECT_PATH }}/${{ env.DEMO_PROJECT_NAME }}.csproj --configuration Release --no-restore
 
       - name: Publish demo application
         run: |
@@ -85,37 +87,37 @@ jobs:
             echo "Warning: appsettings.json not found"
           fi
 
-      - name: Configure base path for Cloudflare Pages
-        run: |
-          # Update index.html to use correct base path
-          # Cloudflare Pages serves from root by default
-          echo "Checking published files..."
-          ls -la ./publish/wwwroot/
-          echo ""
-          echo "Checking CSS directory..."
-          if [ -d "./publish/wwwroot/css" ]; then
-            echo "✓ css directory found"
-            ls -la ./publish/wwwroot/css/
-          else
-            echo "✗ css directory NOT found"
-          fi
-          echo ""
-          echo "Checking for service worker files..."
-          if [ -f "./publish/wwwroot/service-worker.js" ]; then
-            echo "✓ service-worker.js found"
-          else
-            echo "✗ service-worker.js NOT found"
-          fi
-          if [ -f "./publish/wwwroot/service-worker-assets.js" ]; then
-            echo "✓ service-worker-assets.js found"
-          else
-            echo "✗ service-worker-assets.js NOT found"
-          fi
-          if [ -f "./publish/wwwroot/service-worker.published.js" ]; then
-            echo "✓ service-worker.published.js found"
-          else
-            echo "✗ service-worker.published.js NOT found"
-          fi
+      # - name: Configure base path for Cloudflare Pages
+      #   run: |
+      #     # Update index.html to use correct base path
+      #     # Cloudflare Pages serves from root by default
+      #     echo "Checking published files..."
+      #     ls -la ./publish/wwwroot/
+      #     echo ""
+      #     echo "Checking CSS directory..."
+      #     if [ -d "./publish/wwwroot/css" ]; then
+      #       echo "✓ css directory found"
+      #       ls -la ./publish/wwwroot/css/
+      #     else
+      #       echo "✗ css directory NOT found"
+      #     fi
+      #     echo ""
+      #     echo "Checking for service worker files..."
+      #     if [ -f "./publish/wwwroot/service-worker.js" ]; then
+      #       echo "✓ service-worker.js found"
+      #     else
+      #       echo "✗ service-worker.js NOT found"
+      #     fi
+      #     if [ -f "./publish/wwwroot/service-worker-assets.js" ]; then
+      #       echo "✓ service-worker-assets.js found"
+      #     else
+      #       echo "✗ service-worker-assets.js NOT found"
+      #     fi
+      #     if [ -f "./publish/wwwroot/service-worker.published.js" ]; then
+      #       echo "✓ service-worker.published.js found"
+      #     else
+      #       echo "✗ service-worker.published.js NOT found"
+      #     fi
 
       # - name: Add _headers file for proper MIME types
       #   run: |
