@@ -1,0 +1,5 @@
+# Cloudflare Pages Redirects Configuration for Blazor PWA
+
+# SPA fallback - redirect all non-file requests to index.html
+# This ensures client-side routing works correctly
+/*    /index.html   200
