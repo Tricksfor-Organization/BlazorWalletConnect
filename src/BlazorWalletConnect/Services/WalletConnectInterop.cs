@@ -261,7 +261,7 @@ namespace BlazorWalletConnect.Services
         {
             if (_module is null)
                 _module = await _jsRuntime.InvokeAsync<IJSObjectReference>("import",
-                    "./_content/BlazorWalletConnect/Tricksfor.WalletConnect.bundle.js");
+                    "./_content/Tricksfor.BlazorWalletConnect/Tricksfor.WalletConnect.bundle.js");
             return _module;
         }
         #endregion
