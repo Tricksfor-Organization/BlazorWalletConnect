@@ -18,6 +18,10 @@
 		<None Include="README.md" Pack="true" PackagePath="\" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<Content Include="wwwroot\Tricksfor.WalletConnect.bundle.js" Pack="true" />
+	</ItemGroup>
+
     <ItemGroup>
 		<SupportedPlatform Include="browser" />
 	</ItemGroup>

@@ -103,27 +103,18 @@ jobs:
         with:
           node-version: '${{ env.NODE_VERSION }}'
 
-      # Run npm build inside your RCL
-      - name: Install npm packages
-        working-directory: ./src/BlazorWalletConnect/Npm
-        run: npm install --legacy-peer-deps
-
-      - name: Build NPM assets
-        working-directory: ./src/BlazorWalletConnect/Npm
-        run: npm run build
-
-      # OPTIONAL: verify JS output
-      - name: List generated JS files
-        run: ls -R ./src/BlazorWalletConnect/wwwroot
-
       - name: Restore Workloads
         run: dotnet workload restore
 
       - name: Restore dependencies
         run: dotnet restore
 
-      - name: Build solution
-        run: dotnet build --configuration Release --no-restore
+      - name: Build
+        run: dotnet build src/${{ env.APPLICATION_NAME }}/${{ env.APPLICATION_NAME }}.csproj -c Release --no-restore
+
+      # OPTIONAL: verify JS output
+      - name: List generated JS files
+        run: ls -R ./src/BlazorWalletConnect/wwwroot
 
       - name: Compute package version from release tag
         run: |
