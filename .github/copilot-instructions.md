@@ -127,7 +127,7 @@ private void RaiseAccountChanged(AccountDto? current, AccountDto? previous)
 ```csharp
 // C# side
 var module = await _jsRuntime.InvokeAsync<IJSObjectReference>(
-    "import", "./_content/BlazorWalletConnect/main.bundle.js");
+    "import", "./_content/BlazorWalletConnect/Tricksfor.WalletConnect.bundle.js");
 var result = await module.InvokeAsync<string>("functionName", param1, param2);
 
 // TypeScript side
@@ -281,7 +281,7 @@ dotnet run
 
 1. Add method to `IWalletConnectInterop` interface
 2. Implement in `WalletConnectInterop` class
-3. Add corresponding TypeScript function in `main.ts`
+3. Add corresponding TypeScript function in `Tricksfor.WalletConnect.ts`
 4. Create unit tests
 5. Update documentation
 
@@ -415,7 +415,7 @@ export async function sendTransaction(input: string) {
 ### Important Files
 - `Configurations.cs` - Service registration
 - `WalletConnectInterop.cs` - Main service implementation
-- `main.ts` - TypeScript/JavaScript interop
+- `Tricksfor.WalletConnect.ts` - TypeScript/JavaScript interop
 - `Directory.Packages.props` - Package versions
 - `ci.yml` - CI/CD pipeline
 

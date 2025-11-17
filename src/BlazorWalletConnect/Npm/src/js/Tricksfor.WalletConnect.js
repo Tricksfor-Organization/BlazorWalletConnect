@@ -410,4 +410,4 @@ function validateAccount() {
             account = (0, core_1.getAccount)(walletConfig);
     });
 }
-//# sourceMappingURL=main.js.map
+//# sourceMappingURL=Tricksfor.WalletConnect.js.map

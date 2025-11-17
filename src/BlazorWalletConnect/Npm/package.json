@@ -2,10 +2,10 @@
   "name": "npm",
   "version": "1.0.0",
   "description": "",
-  "main": "main.ts",
+  "main": "Tricksfor.WalletConnect.ts",
   "scripts": {
-    "build": "esbuild ./src/js/main.ts --outfile=../wwwroot/main.bundle.js --bundle --minify --format=esm",
-    "buildDebug": "esbuild ./src/js/main.ts --outfile=../wwwroot/main.bundle.js --bundle --sourcemap --format=esm"
+    "build": "esbuild ./src/js/Tricksfor.WalletConnect.ts --outfile=../wwwroot/Tricksfor.WalletConnect.bundle.js --bundle --minify --format=esm",
+    "buildDebug": "esbuild ./src/js/Tricksfor.WalletConnect.ts --outfile=../wwwroot/Tricksfor.WalletConnect.bundle.js --bundle --sourcemap --format=esm"
   },
   "keywords": [],
   "author": "",

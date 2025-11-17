@@ -289823,7 +289823,7 @@ var WagmiAdapter = class extends AdapterBlueprint {
   }
 };
 
-// src/js/main.ts
+// src/js/Tricksfor.WalletConnect.ts
 init_chains();
 init_exports8();
 init_esm3();
@@ -290382,4 +290382,4 @@ eventemitter2/lib/eventemitter2.js:
    * Licensed under the MIT license.
    *)
 */
-//# sourceMappingURL=main.bundle.js.map
+//# sourceMappingURL=Tricksfor.WalletConnect.bundle.js.map
