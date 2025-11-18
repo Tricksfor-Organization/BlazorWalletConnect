@@ -79,11 +79,13 @@ function configure(options, dotNetInterop) {
                 onramp: true
             },
             termsConditionsUrl,
+            enableReconnect: true,
+            enableNetworkSwitch: true,
             privacyPolicyUrl,
             themeMode: themeMode,
             themeVariables: {
-                '--w3m-color-mix': backgroundColor,
-                '--w3m-accent': accentColor
+                '--apkt-color-mix': backgroundColor,
+                '--apkt-accent': accentColor
             }
         });
         (0, core_1.watchAccount)(walletConfig, {

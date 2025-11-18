@@ -4,11 +4,11 @@
 
 @if (string.IsNullOrEmpty(Label))
 {
-    <w3m-button />
+    <appkit-connect-button />
 }
 else
 {
-    <w3m-button label=@Label balance=@(ShowBalance ? "show" : "hide") />
+    <appkit-button label=@Label balance=@(ShowBalance ? "show" : "hide") />
 }
 
 @code {

@@ -289882,11 +289882,13 @@ async function configure(options2, dotNetInterop) {
       onramp: true
     },
     termsConditionsUrl,
+    enableReconnect: true,
+    enableNetworkSwitch: true,
     privacyPolicyUrl,
     themeMode,
     themeVariables: {
-      "--w3m-color-mix": backgroundColor,
-      "--w3m-accent": accentColor
+      "--apkt-color-mix": backgroundColor,
+      "--apkt-accent": accentColor
     }
   });
   watchAccount(walletConfig, {
