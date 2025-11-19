@@ -38342,11 +38342,11 @@ var init_ERC7811Util = __esm({
 // node_modules/@reown/appkit-controllers/dist/esm/src/utils/ViemUtil.js
 async function loadViemUtils() {
   if (!cachedViemUtils) {
-    const { createPublicClient: createPublicClient2, http: http2, defineChain: defineChain4 } = await Promise.resolve().then(() => (init_esm3(), esm_exports));
+    const { createPublicClient: createPublicClient2, http: http2, defineChain: defineChain5 } = await Promise.resolve().then(() => (init_esm3(), esm_exports));
     cachedViemUtils = {
       createPublicClient: createPublicClient2,
       http: http2,
-      defineChain: defineChain4
+      defineChain: defineChain5
     };
   }
   return cachedViemUtils;
@@ -38365,9 +38365,9 @@ var init_ViemUtil = __esm({
         return url3.toString();
       },
       async getViemChain(caipNetwork) {
-        const { defineChain: defineChain4 } = await loadViemUtils();
+        const { defineChain: defineChain5 } = await loadViemUtils();
         const { chainId } = ParseUtil.parseCaipNetworkId(caipNetwork.caipNetworkId);
-        return defineChain4({ ...caipNetwork, id: Number(chainId) });
+        return defineChain5({ ...caipNetwork, id: Number(chainId) });
       },
       async createViemPublicClient(caipNetwork) {
         const { createPublicClient: createPublicClient2, http: http2 } = await loadViemUtils();
@@ -227854,8 +227854,8 @@ var require_defineChain = __commonJS({
   "node_modules/viem/_cjs/utils/chain/defineChain.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.defineChain = defineChain4;
-    function defineChain4(chain2) {
+    exports.defineChain = defineChain5;
+    function defineChain5(chain2) {
       return {
         formatters: void 0,
         fees: void 0,
@@ -289823,8 +289823,143 @@ var WagmiAdapter = class extends AdapterBlueprint {
   }
 };
 
-// src/js/Tricksfor.WalletConnect.ts
+// node_modules/@reown/appkit/dist/esm/src/networks/index.js
 init_chains();
+
+// node_modules/@reown/appkit/dist/esm/src/networks/utils.js
+function defineChain4(chain2) {
+  return {
+    formatters: void 0,
+    fees: void 0,
+    serializers: void 0,
+    ...chain2
+  };
+}
+
+// node_modules/@reown/appkit/dist/esm/src/networks/solana/solana.js
+var solana2 = defineChain4({
+  id: "5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+  name: "Solana",
+  network: "solana-mainnet",
+  nativeCurrency: { name: "Solana", symbol: "SOL", decimals: 9 },
+  rpcUrls: {
+    default: { http: ["https://rpc.walletconnect.org/v1"] }
+  },
+  blockExplorers: { default: { name: "Solscan", url: "https://solscan.io" } },
+  testnet: false,
+  chainNamespace: "solana",
+  caipNetworkId: "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+  deprecatedCaipNetworkId: "solana:4sGjMW1sUnHzSxGspuhpqLDx6wiyjNtZ"
+});
+
+// node_modules/@reown/appkit/dist/esm/src/networks/solana/solanaDevnet.js
+var solanaDevnet2 = defineChain4({
+  id: "EtWTRABZaYq6iMfeYKouRu166VU2xqa1",
+  name: "Solana Devnet",
+  network: "solana-devnet",
+  nativeCurrency: { name: "Solana", symbol: "SOL", decimals: 9 },
+  rpcUrls: {
+    default: { http: ["https://rpc.walletconnect.org/v1"] }
+  },
+  blockExplorers: { default: { name: "Solscan", url: "https://solscan.io" } },
+  testnet: true,
+  chainNamespace: "solana",
+  caipNetworkId: "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1",
+  deprecatedCaipNetworkId: "solana:8E9rvCKLFQia2Y35HXjjpWzj8weVo44K"
+});
+
+// node_modules/@reown/appkit/dist/esm/src/networks/solana/solanaTestnet.js
+var solanaTestnet2 = defineChain4({
+  id: "4uhcVJyU9pJkvQyS88uRDiswHXSCkY3z",
+  name: "Solana Testnet",
+  network: "solana-testnet",
+  nativeCurrency: { name: "Solana", symbol: "SOL", decimals: 9 },
+  rpcUrls: {
+    default: { http: ["https://rpc.walletconnect.org/v1"] }
+  },
+  blockExplorers: { default: { name: "Solscan", url: "https://solscan.io" } },
+  testnet: true,
+  chainNamespace: "solana",
+  caipNetworkId: "solana:4uhcVJyU9pJkvQyS88uRDiswHXSCkY3z"
+});
+
+// node_modules/@reown/appkit/dist/esm/src/networks/bitcoin.js
+var bitcoin2 = defineChain4({
+  id: "000000000019d6689c085ae165831e93",
+  caipNetworkId: "bip122:000000000019d6689c085ae165831e93",
+  chainNamespace: "bip122",
+  name: "Bitcoin",
+  nativeCurrency: {
+    name: "Bitcoin",
+    symbol: "BTC",
+    decimals: 8
+  },
+  rpcUrls: {
+    default: { http: ["https://rpc.walletconnect.org/v1"] }
+  }
+});
+var bitcoinTestnet2 = defineChain4({
+  id: "000000000933ea01ad0ee984209779ba",
+  caipNetworkId: "bip122:000000000933ea01ad0ee984209779ba",
+  chainNamespace: "bip122",
+  name: "Bitcoin Testnet",
+  nativeCurrency: {
+    name: "Bitcoin",
+    symbol: "BTC",
+    decimals: 8
+  },
+  rpcUrls: {
+    default: { http: ["https://rpc.walletconnect.org/v1"] }
+  },
+  testnet: true
+});
+var bitcoinSignet = defineChain4({
+  id: "00000008819873e925422c1ff0f99f7c",
+  caipNetworkId: "bip122:00000008819873e925422c1ff0f99f7c",
+  chainNamespace: "bip122",
+  name: "Bitcoin Signet",
+  nativeCurrency: {
+    name: "Bitcoin",
+    symbol: "BTC",
+    decimals: 8
+  },
+  rpcUrls: {
+    default: { http: ["https://rpc.walletconnect.org/v1"] }
+  },
+  testnet: true
+});
+
+// node_modules/@reown/appkit/dist/esm/src/networks/ton/ton.js
+var ton = defineChain4({
+  id: "-239",
+  name: "TON",
+  network: "ton-mainnet",
+  nativeCurrency: { name: "TON", symbol: "TON", decimals: 9 },
+  rpcUrls: {
+    default: { http: ["https://rpc.walletconnect.org/v1"] }
+  },
+  blockExplorers: { default: { name: "Tonscan", url: "https://tonscan.org" } },
+  testnet: false,
+  chainNamespace: "ton",
+  caipNetworkId: "ton:-239"
+});
+
+// node_modules/@reown/appkit/dist/esm/src/networks/ton/tonTestnet.js
+var tonTestnet = defineChain4({
+  id: "-3",
+  name: "TON Testnet",
+  network: "ton-testnet",
+  nativeCurrency: { name: "TON", symbol: "TON", decimals: 9 },
+  rpcUrls: {
+    default: { http: ["https://rpc.walletconnect.org/v1"] }
+  },
+  blockExplorers: { default: { name: "Tonscan", url: "https://testnet.tonscan.org" } },
+  testnet: true,
+  chainNamespace: "ton",
+  caipNetworkId: "ton:-3"
+});
+
+// src/js/Tricksfor.WalletConnect.ts
 init_exports8();
 init_esm3();
 var configured = false;
@@ -289888,7 +290023,9 @@ async function configure(options2, dotNetInterop) {
     themeMode,
     themeVariables: {
       "--apkt-color-mix": backgroundColor,
-      "--apkt-accent": accentColor
+      "--apkt-accent": accentColor,
+      "--w3m-accent": accentColor,
+      "--w3m-color-mix": backgroundColor
     }
   });
   watchAccount(walletConfig, {

@@ -1,6 +1,6 @@
 import { createAppKit } from '@reown/appkit'
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
-import { polygon, mainnet, arbitrum, optimism, bsc, Chain } from 'viem/chains'
+import { polygon, mainnet, arbitrum, optimism, bsc, Chain } from '@reown/appkit/networks'
 import {
     reconnect, disconnect, Config, getAccount, getBalance, GetAccountReturnType,
     sendTransaction, SendTransactionErrorType, SendTransactionParameters, SendTransactionReturnType,
@@ -79,7 +79,9 @@ export async function configure(options: string, dotNetInterop: any): Promise<vo
         themeMode: themeMode,
         themeVariables: {
             '--apkt-color-mix': backgroundColor,
-            '--apkt-accent': accentColor
+            '--apkt-accent': accentColor,
+            '--w3m-accent': accentColor,
+            '--w3m-color-mix': backgroundColor
         }
     })
 

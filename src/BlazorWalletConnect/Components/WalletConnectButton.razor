@@ -4,11 +4,13 @@
 
 @if (string.IsNullOrEmpty(Label))
 {
-    <appkit-connect-button />
+    <appkit-connect-button 
+        size=@(Size is Models.ConnectButtonOptions.ButtonSize.Small ? "sm" : "md")/>
 }
 else
 {
-    <appkit-button label=@Label balance=@(ShowBalance ? "show" : "hide") />
+    <appkit-button label=@Label balance=@(ShowBalance ? "show" : "hide") 
+        size=@(Size is Models.ConnectButtonOptions.ButtonSize.Small ? "sm" : "md") />
 }
 
 @code {
@@ -17,6 +19,9 @@ else
 
     [Parameter]
     public bool ShowBalance { get; set; } = true;
+
+    [Parameter]
+    public Models.ConnectButtonOptions.ButtonSize Size { get; set; } = Models.ConnectButtonOptions.ButtonSize.Medium;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
