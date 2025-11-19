@@ -29,7 +29,7 @@ builder.Services.AddBlazorWalletConnect(options =>
     options.TermsConditionsUrl = "https://example.com/terms";
     options.PrivacyPolicyUrl = "https://example.com/privacy";
     options.ThemeMode = "dark";
-    options.BackgroundColor = "#1a1a1a";
+    options.BackgroundColor = "#28363c";
     options.AccentColor = "#3b82f6";
     options.Chains = new List<BlazorWalletConnect.Models.ChainDto>
     {

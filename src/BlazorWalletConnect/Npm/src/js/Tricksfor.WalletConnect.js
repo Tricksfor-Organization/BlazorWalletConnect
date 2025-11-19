@@ -23,7 +23,7 @@ exports.getStakedTokens = getStakedTokens;
 exports.switchChainId = switchChainId;
 const appkit_1 = require("@reown/appkit");
 const appkit_adapter_wagmi_1 = require("@reown/appkit-adapter-wagmi");
-const chains_1 = require("viem/chains");
+const networks_1 = require("@reown/appkit/networks");
 const core_1 = require("@wagmi/core");
 const viem_1 = require("viem");
 let configured = false;
@@ -44,16 +44,16 @@ function configure(options, dotNetInterop) {
             icons: ['https://avatars.githubusercontent.com/u/37784886']
         };
         const chains = chainIds.map((s) => {
-            if (s.chainId === chains_1.mainnet.id)
-                return chains_1.mainnet;
-            else if (s.chainId === chains_1.polygon.id)
-                return chains_1.polygon;
-            else if (s.chainId === chains_1.arbitrum.id)
-                return chains_1.arbitrum;
-            else if (s.chainId === chains_1.optimism.id)
-                return chains_1.optimism;
-            else if (s.chainId === chains_1.bsc.id)
-                return chains_1.bsc;
+            if (s.chainId === networks_1.mainnet.id)
+                return networks_1.mainnet;
+            else if (s.chainId === networks_1.polygon.id)
+                return networks_1.polygon;
+            else if (s.chainId === networks_1.arbitrum.id)
+                return networks_1.arbitrum;
+            else if (s.chainId === networks_1.optimism.id)
+                return networks_1.optimism;
+            else if (s.chainId === networks_1.bsc.id)
+                return networks_1.bsc;
             else
                 throw new Error('ChainId not found.');
         });
@@ -79,11 +79,15 @@ function configure(options, dotNetInterop) {
                 onramp: true
             },
             termsConditionsUrl,
+            enableReconnect: true,
+            enableNetworkSwitch: true,
             privacyPolicyUrl,
             themeMode: themeMode,
             themeVariables: {
-                '--w3m-color-mix': backgroundColor,
-                '--w3m-accent': accentColor
+                '--apkt-color-mix': backgroundColor,
+                '--apkt-accent': accentColor,
+                '--w3m-accent': accentColor,
+                '--w3m-color-mix': backgroundColor
             }
         });
         (0, core_1.watchAccount)(walletConfig, {

@@ -4,6 +4,7 @@
 		<TargetFramework>net10.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+		<AssemblyName>Tricksfor.BlazorWalletConnect</AssemblyName>
 		<!-- Include README in the generated NuGet package and set repository/project links -->
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryUrl>https://github.com/Tricksfor-Organization/BlazorWalletConnect</RepositoryUrl>
