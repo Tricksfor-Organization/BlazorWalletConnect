@@ -119,7 +119,11 @@ In your `_Imports.razor`:
 @inject IWalletConnectInterop WalletConnect
 
 <WalletConnectButtonProvider>
-    <WalletConnectButton />
+    <WalletConnectButton
+        Label="Connect Wallet"
+        ShowBalance="true"
+        ButtonColor="#22c55e"
+        CssClass="wallet-connect-button" />
 </WalletConnectButtonProvider>
 
 <button @onclick="GetBalance" disabled="@(!isConnected)">
@@ -156,6 +160,33 @@ In your `_Imports.razor`:
     }
 }
 ```
+
+#### Button styling
+
+`AccentColor` configures the accent used throughout the AppKit modal and its controls. Use
+`ButtonColor` when only the disconnected connect button needs a different background color:
+
+```razor
+<WalletConnectButton ButtonColor="#22c55e" />
+```
+
+`ButtonColor` accepts any valid CSS color. `CssClass` is applied to the AppKit component host and
+can be used for layout or additional styling:
+
+```razor
+<WalletConnectButton
+    Label="Connect"
+    ButtonColor="rgb(34 197 94)"
+    CssClass="wallet-connect-button" />
+```
+
+```css
+.wallet-connect-button {
+    margin-inline: auto;
+}
+```
+
+After a wallet is connected, AppKit renders its account button using the configured AppKit theme.
 
 ## 📚 Documentation
 

@@ -134,6 +134,10 @@ code {
     font-size: 1.2rem;
 }
 
+.demo-wallet-button {
+    margin-inline: auto;
+}
+
 .wallet-section {
     background: #f8f9fa;
     border-radius: 8px;

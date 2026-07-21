@@ -65,8 +65,16 @@ This demo showcases the following features of BlazorWalletConnect:
 Simply add the component to your Razor page:
 
 ```razor
-<WalletConnectButton Label="Connect Wallet" ShowBalance="true" />
+<WalletConnectButton
+    Label="Connect Wallet"
+    ShowBalance="true"
+    ButtonColor="#22c55e"
+    CssClass="demo-wallet-button" />
 ```
+
+`ButtonColor` changes the disconnected connect button without changing the AppKit modal accent.
+Use `CssClass` for layout or additional host styling. `options.AccentColor` below still controls the
+shared accent color used throughout AppKit.
 
 ### Configuration
 

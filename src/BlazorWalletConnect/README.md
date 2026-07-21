@@ -43,15 +43,23 @@ Visit [WalletConnect Cloud](https://cloud.walletconnect.com/) and create a free 
 
 ```csharp
 // Program.cs
-builder.Services.AddWalletConnect(options =>
+builder.Services.AddBlazorWalletConnect(options =>
 {
     options.ProjectId = "YOUR_PROJECT_ID";
-    options.Metadata = new AppMetadata
+    options.Name = "My Blazor dApp";
+    options.Description = "Web3 application built with Blazor";
+    options.Url = "https://myapp.com";
+    options.TermsConditionsUrl = "https://myapp.com/terms";
+    options.PrivacyPolicyUrl = "https://myapp.com/privacy";
+    options.ThemeMode = "auto";
+    options.BackgroundColor = "#202020";
+    options.AccentColor = "#3b82f6";
+    options.ColorMixStrength = 40;
+    options.Chains = new List<ChainDto>
     {
-        Name = "My Blazor dApp",
-        Description = "Web3 application built with Blazor",
-        Url = "https://myapp.com",
-        Icons = new[] { "https://myapp.com/icon.png" }
+        new(Chain.MainNet, "https://ethereum-rpc.publicnode.com"),
+        new(Chain.Polygon, "https://polygon-rpc.com"),
+        new(Chain.Avalanche, "https://api.avax.network/ext/bc/C/rpc")
     };
 });
 ```
@@ -62,7 +70,11 @@ builder.Services.AddWalletConnect(options =>
 @page "/"
 @inject IWalletConnectInterop WalletConnect
 
-<WalletConnectButton />
+<WalletConnectButton
+    Label="Connect Wallet"
+    ShowBalance="true"
+    ButtonColor="#22c55e"
+    CssClass="wallet-connect-button" />
 
 @if (account?.IsConnected == true)
 {
@@ -97,6 +109,19 @@ builder.Services.AddWalletConnect(options =>
     {
         WalletConnect.AccountChanged -= OnAccountChanged;
     }
+}
+```
+
+### Button Styling
+
+`ButtonColor` changes only the disconnected connect button background and accepts any valid CSS
+color. `CssClass` applies a class to the AppKit component host for layout or additional styling.
+The global `WalletConnectOptions.AccentColor` continues to control the AppKit modal accent and the
+connected account display continues to use the configured AppKit theme.
+
+```css
+.wallet-connect-button {
+    margin-inline: auto;
 }
 ```
 
