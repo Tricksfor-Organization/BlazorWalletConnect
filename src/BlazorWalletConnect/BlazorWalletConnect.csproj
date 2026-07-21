@@ -30,7 +30,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<WalletConnectAssetSource Include="Npm/src/**/*.ts;Npm/tests/**/*.ts;Npm/package.json;Npm/package-lock.json;tsconfig.json" />
+		<WalletConnectAssetSource Include="Npm/src/**/*.ts;Npm/tests/**/*.ts;Npm/scripts/**/*.mjs;Npm/package.json;Npm/package-lock.json;tsconfig.json" />
 	</ItemGroup>
 
 	<Target Name="RestoreWalletConnectNpmPackages"
@@ -45,6 +45,7 @@
 		Inputs="@(WalletConnectAssetSource)"
 		Outputs="$(IntermediateOutputPath)walletconnect-assets-$(Configuration).stamp;wwwroot/Tricksfor.WalletConnect.bundle.js">
 		<MakeDir Directories="$(IntermediateOutputPath)" />
+		<Exec Command="npm run check:dependencies" WorkingDirectory="Npm" />
 		<Exec Command="npm run typecheck" WorkingDirectory="Npm" />
 		<Exec Command="npm test" WorkingDirectory="Npm" />
 		<Exec Command="npm run buildDebug" WorkingDirectory="Npm" Condition="'$(Configuration)' == 'Debug'" />

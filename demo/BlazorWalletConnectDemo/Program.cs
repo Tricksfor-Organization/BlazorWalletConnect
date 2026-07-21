@@ -34,9 +34,9 @@ builder.Services.AddBlazorWalletConnect(options =>
     options.ColorMixStrength = 40;
     options.Chains = new List<BlazorWalletConnect.Models.ChainDto>
     {
-        new(Chain.MainNet, "https://ethereum-rpc.publicnode.com"),
-        new(Chain.Polygon, "https://polygon-rpc.com"),
-        new(Chain.Avalanche, "https://api.avax.network/ext/bc/C/rpc")
+        new(Chain.MainNet, null),
+        new(Chain.Polygon, null),
+        new(Chain.Avalanche, null)
     };
 });
 

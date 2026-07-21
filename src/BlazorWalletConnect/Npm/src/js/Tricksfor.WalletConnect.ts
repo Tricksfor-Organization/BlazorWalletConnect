@@ -58,6 +58,12 @@ interface SerializedTransaction {
     data?: string
 }
 
+interface AppKitAccountState {
+    allAccounts: Array<{ namespace: string, address: string }>
+    address?: string
+    status?: 'connected' | 'connecting' | 'disconnected' | 'reconnecting'
+}
+
 const erc20Abi = [
     'function balanceOf(address owner) view returns (uint256)',
     'function decimals() view returns (uint8)',
@@ -81,18 +87,34 @@ const supportedNetworks = new Map<number, AppKitNetwork>([
 ])
 
 let configured = false
+let configurationPromise: Promise<void> | undefined
 let appKit: AppKit | undefined
 let configuredChains = new Map<number, { network: AppKitNetwork, rpcUrl?: string }>()
 let unsubscribeAccount: (() => void) | undefined
 let unsubscribeNetwork: (() => void) | undefined
+let unsubscribeProviders: (() => void) | undefined
+let eip155Provider: Eip1193Provider | undefined
 let previousAccount: WalletAccount | undefined
 let previousChainId: number | undefined
 
-export async function configure(options: string, dotNetInterop: DotNetInterop): Promise<void> {
+export function configure(options: string, dotNetInterop: DotNetInterop): Promise<void> {
     if (configured) {
-        return
+        return Promise.resolve()
     }
 
+    configurationPromise ??= configureAppKit(options, dotNetInterop)
+        .catch(error => {
+            resetConfigurationState()
+            throw error
+        })
+        .finally(() => {
+            configurationPromise = undefined
+        })
+
+    return configurationPromise
+}
+
+async function configureAppKit(options: string, dotNetInterop: DotNetInterop): Promise<void> {
     const configuration = JSON.parse(options) as WalletConnectConfiguration
     const networks = configuration.chainIds.map(({ chainId }) => getSupportedNetwork(chainId))
 
@@ -114,8 +136,9 @@ export async function configure(options: string, dotNetInterop: DotNetInterop): 
             .map(chain => [`eip155:${chain.chainId}`, [{ url: chain.rpcUrl!.trim() }]])
     )
 
+    const ethersAdapter = new EthersAdapter()
     const appKitOptions: CreateAppKit = {
-        adapters: [new EthersAdapter()],
+        adapters: [ethersAdapter],
         networks: networks as [AppKitNetwork, ...AppKitNetwork[]],
         projectId: configuration.projectId,
         metadata: {
@@ -146,12 +169,24 @@ export async function configure(options: string, dotNetInterop: DotNetInterop): 
     }
 
     appKit = createAppKit(appKitOptions)
+    await appKit.ready()
+
+    const adapterNetworkIds = new Set(ethersAdapter.networks.map(network => Number(network.id)))
+    const missingNetworkIds = networks
+        .map(network => Number(network.id))
+        .filter(chainId => !adapterNetworkIds.has(chainId))
+    if (missingNetworkIds.length > 0) {
+        throw new Error(
+            `EthersAdapter did not receive the configured networks: ${missingNetworkIds.join(', ')}. ` +
+            'Ensure Reown singleton dependencies are deduplicated.')
+    }
+
     configured = true
     previousAccount = createWalletAccount()
     previousChainId = previousAccount.chainId || undefined
 
-    unsubscribeAccount = appKit.subscribeAccount(() => {
-        const currentAccount = createWalletAccount()
+    unsubscribeAccount = appKit.subscribeAccount(account => {
+        const currentAccount = createWalletAccount(account)
 
         if (!accountsEqual(currentAccount, previousAccount)) {
             const previous = previousAccount
@@ -173,17 +208,18 @@ export async function configure(options: string, dotNetInterop: DotNetInterop): 
         previousChainId = currentChainId
         void dotNetInterop.invokeMethodAsync('OnChainIdChanged', currentChainId, oldChainId)
     })
+
+    eip155Provider = toEip1193Provider(appKit.getWalletProvider())
+    unsubscribeProviders = appKit.subscribeProviders(providers => {
+        eip155Provider = toEip1193Provider(providers.eip155)
+    })
 }
 
 export async function dispose(): Promise<void> {
-    unsubscribeAll(unsubscribeAccount, unsubscribeNetwork)
-    unsubscribeAccount = undefined
-    unsubscribeNetwork = undefined
-    previousAccount = undefined
-    previousChainId = undefined
-    configuredChains.clear()
-    appKit = undefined
-    configured = false
+    if (configurationPromise) {
+        await configurationPromise.catch(() => undefined)
+    }
+    resetConfigurationState()
 }
 
 export async function disconnectWallet(): Promise<void> {
@@ -338,9 +374,11 @@ function getAppKit(errorMessage: string): AppKit {
     return appKit
 }
 
-function createWalletAccount(): WalletAccount {
+function createWalletAccount(
+    accountState?: AppKitAccountState
+): WalletAccount {
     const modal = getAppKit('Attempting to get account before we have configured.')
-    const account = modal.getAccount('eip155')
+    const account = accountState ?? modal.getAccount('eip155')
     const status = account?.status ?? 'disconnected'
     const address = account?.address
     const addresses = account?.allAccounts
@@ -373,13 +411,33 @@ function validateAccount(): WalletAccount & { address: string } {
 
 async function getSigner() {
     const modal = getAppKit('Attempting to access a wallet provider before we have configured.')
-    const walletProvider = modal.getWalletProvider()
+    const walletProvider = eip155Provider ?? toEip1193Provider(modal.getWalletProvider())
     if (!walletProvider) {
         throw new Error('No EVM wallet provider is available.')
     }
 
-    const provider = new BrowserProvider(walletProvider as Eip1193Provider)
+    const provider = new BrowserProvider(walletProvider)
     return provider.getSigner()
+}
+
+function toEip1193Provider(provider: unknown): Eip1193Provider | undefined {
+    if (typeof provider !== 'object' || provider === null || !('request' in provider)) {
+        return undefined
+    }
+    return typeof provider.request === 'function' ? provider as Eip1193Provider : undefined
+}
+
+function resetConfigurationState(): void {
+    unsubscribeAll(unsubscribeAccount, unsubscribeNetwork, unsubscribeProviders)
+    unsubscribeAccount = undefined
+    unsubscribeNetwork = undefined
+    unsubscribeProviders = undefined
+    eip155Provider = undefined
+    previousAccount = undefined
+    previousChainId = undefined
+    configuredChains.clear()
+    appKit = undefined
+    configured = false
 }
 
 function getReadProvider(chainId: number): Provider {
