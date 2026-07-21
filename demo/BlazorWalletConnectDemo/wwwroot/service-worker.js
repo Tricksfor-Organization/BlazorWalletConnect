@@ -1,4 +1,8 @@
-// In development, always fetch from the network and do not enable offline support.
-// This is because caching would make development more difficult (changes would not
-// be reflected on the first load after each change).
-self.addEventListener('fetch', () => { });
+// The published app replaces this file with service-worker.published.js.
+// During development, unregister this worker so it cannot survive a debug session
+// and interfere with the next Blazor WebAssembly debugger launch.
+self.addEventListener('install', () => self.skipWaiting());
+
+self.addEventListener('activate', event => {
+    event.waitUntil(self.registration.unregister());
+});

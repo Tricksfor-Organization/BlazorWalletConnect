@@ -6,7 +6,7 @@ BlazorWalletConnect is a Blazor WebAssembly library that integrates WalletConnec
 
 ## Technology Stack
 
-- **Framework**: .NET 9.0, Blazor WebAssembly
+- **Framework**: .NET 10.0, Blazor WebAssembly
 - **Language**: C# 12, TypeScript 5.x
 - **Package Manager**: NuGet (with Central Package Management)
 - **JavaScript**: Reown AppKit (formerly Web3Modal), Wagmi, Viem

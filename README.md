@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![.NET](https://img.shields.io/badge/.NET-9_|_10-blue.svg)](https://dotnet.microsoft.com/download)
 
-A powerful Blazor WebAssembly library for integrating WalletConnect into your Web3 applications. Supports multiple blockchain networks including Ethereum, Polygon, Arbitrum, Optimism, BSC and more.
+A powerful Blazor WebAssembly library for integrating WalletConnect into your Web3 applications. Reown AppKit provides the wallet UI and WalletConnect sessions, while Ethers 6 handles EVM interactions on Ethereum, Polygon, Arbitrum, Optimism, BSC, and Avalanche.
 
 ## 🌐 Live Demo
 
@@ -16,7 +16,7 @@ The demo showcases all library features including wallet connection, balance que
 ## ✨ Features
 
 - 🔌 **Easy WalletConnect Integration** - Connect to 300+ wallets with a few lines of code
-- 🌐 **Multi-Chain Support** - Ethereum, Polygon, Arbitrum, Optimism, BSC, and custom chains
+- 🌐 **Multi-Chain Support** - Ethereum, Polygon, Arbitrum, Optimism, BSC, and Avalanche
 - 💼 **Wallet Operations** - Connect, disconnect, switch networks seamlessly
 - 💰 **Balance Queries** - Native tokens and ERC20 token balances
 - 📝 **Transaction Management** - Send transactions and track confirmations
@@ -87,13 +87,14 @@ builder.Services.AddBlazorWalletConnect(options =>
     options.ThemeMode = "dark"; // "light", "dark", or "auto"
     options.BackgroundColor = "#000000";
     options.AccentColor = "#3b82f6";
+    options.ColorMixStrength = 40; // 0-100
     
     // Supported Chains
     options.Chains = new List<ChainDto>
     {
         new ChainDto(Chain.MainNet, "https://mainnet.infura.io/v3/YOUR_KEY"),
         new ChainDto(Chain.Polygon, "https://polygon-rpc.com"),
-        new ChainDto(Chain.Sepolia, null) // Use default RPC
+        new ChainDto(Chain.Avalanche, "https://api.avax.network/ext/bc/C/rpc")
     };
 });
 
@@ -118,7 +119,11 @@ In your `_Imports.razor`:
 @inject IWalletConnectInterop WalletConnect
 
 <WalletConnectButtonProvider>
-    <WalletConnectButton />
+    <WalletConnectButton
+        Label="Connect Wallet"
+        ShowBalance="true"
+        ButtonColor="#22c55e"
+        CssClass="wallet-connect-button" />
 </WalletConnectButtonProvider>
 
 <button @onclick="GetBalance" disabled="@(!isConnected)">
@@ -155,6 +160,33 @@ In your `_Imports.razor`:
     }
 }
 ```
+
+#### Button styling
+
+`AccentColor` configures the accent used throughout the AppKit modal and its controls. Use
+`ButtonColor` when only the disconnected connect button needs a different background color:
+
+```razor
+<WalletConnectButton ButtonColor="#22c55e" />
+```
+
+`ButtonColor` accepts any valid CSS color. `CssClass` is applied to the AppKit component host and
+can be used for layout or additional styling:
+
+```razor
+<WalletConnectButton
+    Label="Connect"
+    ButtonColor="rgb(34 197 94)"
+    CssClass="wallet-connect-button" />
+```
+
+```css
+.wallet-connect-button {
+    margin-inline: auto;
+}
+```
+
+After a wallet is connected, AppKit renders its account button using the configured AppKit theme.
 
 ## 📚 Documentation
 
@@ -333,6 +365,7 @@ public void Dispose()
 options.ThemeMode = "dark"; // "light", "dark", "auto"
 options.BackgroundColor = "#1a1a1a";
 options.AccentColor = "#3b82f6";
+options.ColorMixStrength = 40; // 0-100
 ```
 
 ### Supported Chains
@@ -346,7 +379,7 @@ options.Chains = new List<ChainDto>
     new ChainDto(Chain.Polygon, "https://polygon-rpc.com"),
     new ChainDto(Chain.Arbitrum, "https://arb1.arbitrum.io/rpc"),
     new ChainDto(Chain.Optimism, "https://mainnet.optimism.io"),
-    new ChainDto(Chain.Sepolia, null), // Test network
+    new ChainDto(Chain.Avalanche, "https://api.avax.network/ext/bc/C/rpc"),
 };
 ```
 

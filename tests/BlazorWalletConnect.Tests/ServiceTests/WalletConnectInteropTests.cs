@@ -326,6 +326,38 @@ public class WalletConnectInteropTests
     }
 
     [Test]
+    public async Task TransactionConfirmed_WithEthersReceiptShape_ShouldDeserializeJsonRpcFields()
+    {
+        TransactionReceipt? capturedReceipt = null;
+        _sut.TransactionConfirmed += (_, args) => capturedReceipt = args.TransactionReceipt;
+        const string receiptJson = """
+            {
+              "transactionHash": "0xReceiptHash",
+              "transactionIndex": "0x2",
+              "blockHash": "0xBlockHash",
+              "blockNumber": "0x2a",
+              "from": "0x1111111111111111111111111111111111111111",
+              "to": "0x2222222222222222222222222222222222222222",
+              "cumulativeGasUsed": "0xa410",
+              "gasUsed": "0x5208",
+              "effectiveGasPrice": "0x3b9aca00",
+              "contractAddress": null,
+              "logs": [],
+              "logsBloom": "0x00",
+              "status": "0x1",
+              "type": "0x2"
+            }
+            """;
+
+        await _sut.OnTransactionConfirmed(receiptJson);
+
+        capturedReceipt.Should().NotBeNull();
+        capturedReceipt!.TransactionHash.Should().Be("0xReceiptHash");
+        capturedReceipt.BlockNumber.Value.Should().Be(new BigInteger(42));
+        capturedReceipt.Status.Value.Should().Be(BigInteger.One);
+    }
+
+    [Test]
     public async Task AccountChanged_EventShouldBeRaised()
     {
         // Arrange
@@ -385,6 +417,7 @@ public class WalletConnectInteropTests
         await _sut.DisposeAsync();
 
         // Assert
+        await _jsModule.Received(1).InvokeVoidAsync("dispose");
         await _jsModule.Received(1).DisposeAsync();
     }
 

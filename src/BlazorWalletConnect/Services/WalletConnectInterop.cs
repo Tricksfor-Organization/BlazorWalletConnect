@@ -91,7 +91,7 @@ namespace BlazorWalletConnect.Services
         public async Task<BigInteger?> GetTokenOfOwnerByIndexAsync(string erc721ContractAddress, BigInteger index)
         {
             var module = await EnsureConfiguredAsync();
-            var stringResult = await module.InvokeAsync<string>("getTokenOfOwnerByIndex", erc721ContractAddress, (long)index);
+            var stringResult = await module.InvokeAsync<string>("getTokenOfOwnerByIndex", erc721ContractAddress, index.ToString());
             var deserializedString = JsonSerializer.Deserialize<string>(stringResult);
             return deserializedString != null ? BigInteger.Parse(deserializedString) : null;
         }
@@ -222,6 +222,15 @@ namespace BlazorWalletConnect.Services
         {
             if (_module is not null)
             {
+                try
+                {
+                    await _module.InvokeVoidAsync("dispose").ConfigureAwait(false);
+                }
+                catch (JSDisconnectedException)
+                {
+                    // The browser circuit has already ended, so JavaScript cleanup is no longer reachable.
+                }
+
                 await _module.DisposeAsync().ConfigureAwait(false);
             }
 

@@ -25,17 +25,18 @@ builder.Services.AddBlazorWalletConnect(options =>
     options.ProjectId = projectId;
     options.Name = "BlazorWalletConnect Demo";
     options.Description = "A demo application showcasing BlazorWalletConnect integration";
-    options.Url = "https://localhost:5001";
+    options.Url = builder.HostEnvironment.BaseAddress;
     options.TermsConditionsUrl = "https://example.com/terms";
     options.PrivacyPolicyUrl = "https://example.com/privacy";
     options.ThemeMode = "dark";
     options.BackgroundColor = "#28363c";
     options.AccentColor = "#3b82f6";
+    options.ColorMixStrength = 40;
     options.Chains = new List<BlazorWalletConnect.Models.ChainDto>
     {
-        // Replace 'YOUR_INFURA_KEY_HERE' with your actual Infura API key.
-        new(Chain.MainNet, "https://mainnet.infura.io/v3/YOUR_INFURA_KEY_HERE"),
-        new(Chain.Polygon, "https://polygon-rpc.com")
+        new(Chain.MainNet, null),
+        new(Chain.Polygon, null),
+        new(Chain.Avalanche, null)
     };
 });
 

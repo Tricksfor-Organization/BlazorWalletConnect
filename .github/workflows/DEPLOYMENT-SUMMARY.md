@@ -115,7 +115,7 @@ To create a release:
 The deployment process:
 
 1. ✅ **Checks out code** from the release tag
-2. ✅ **Sets up .NET 9** and Node.js 20
+2. ✅ **Sets up .NET 10** and Node.js 20
 3. ✅ **Caches dependencies** for faster builds
 4. ✅ **Restores packages** (NuGet and npm)
 5. ✅ **Builds library** (BlazorWalletConnect)
