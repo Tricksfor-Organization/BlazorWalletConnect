@@ -11,7 +11,8 @@
 		<RepositoryType>git</RepositoryType>
 		<PackageProjectUrl>https://github.com/Tricksfor-Organization/BlazorWalletConnect</PackageProjectUrl>
 		<Authors>Tricksfor Organization</Authors>
-		<Description>Blazor WalletConnect integration for multi-chain Web3 applications. Supports Ethereum, Polygon, Arbitrum, Optimism, BSC and more. Includes wallet connection, signing, transactions, NFT operations, and event handling.</Description>
+		<Description>Blazor WalletConnect integration for multi-chain Web3 applications. Supports Ethereum, Polygon, Arbitrum, Optimism, BSC, Avalanche and more. Includes wallet connection, signing, transactions, NFT operations, and event handling.</Description>
+		<DefaultItemExcludes>$(DefaultItemExcludes);Npm\**\*;tsconfig.json;Properties\launchSettings.json</DefaultItemExcludes>
 	</PropertyGroup>
 	
 	<ItemGroup>
@@ -25,17 +26,30 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Components.Web" />
 		<PackageReference Include="Nethereum.Contracts" />
-		<PackageReference Include="Microsoft.TypeScript.MSBuild">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
 		<PackageReference Include="Newtonsoft.Json" />
 	</ItemGroup>
 
-	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-		<Exec Command="npm install --legacy-peer-deps" WorkingDirectory="Npm" />
+	<ItemGroup>
+		<WalletConnectAssetSource Include="Npm/src/**/*.ts;Npm/tests/**/*.ts;Npm/package.json;Npm/package-lock.json;tsconfig.json" />
+	</ItemGroup>
+
+	<Target Name="RestoreWalletConnectNpmPackages"
+		Inputs="Npm/package.json;Npm/package-lock.json"
+		Outputs="Npm/node_modules/.package-lock.json">
+		<Exec Command="npm ci" WorkingDirectory="Npm" />
+	</Target>
+
+	<Target Name="BuildWalletConnectAssets"
+		BeforeTargets="PrepareForBuild"
+		DependsOnTargets="RestoreWalletConnectNpmPackages"
+		Inputs="@(WalletConnectAssetSource)"
+		Outputs="$(IntermediateOutputPath)walletconnect-assets-$(Configuration).stamp;wwwroot/Tricksfor.WalletConnect.bundle.js">
+		<MakeDir Directories="$(IntermediateOutputPath)" />
+		<Exec Command="npm run typecheck" WorkingDirectory="Npm" />
+		<Exec Command="npm test" WorkingDirectory="Npm" />
 		<Exec Command="npm run buildDebug" WorkingDirectory="Npm" Condition="'$(Configuration)' == 'Debug'" />
 		<Exec Command="npm run build" WorkingDirectory="Npm" Condition="'$(Configuration)' == 'Release'" />
+		<Touch Files="$(IntermediateOutputPath)walletconnect-assets-$(Configuration).stamp" AlwaysCreate="true" />
 	</Target>
 
 </Project>

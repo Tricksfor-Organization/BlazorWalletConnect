@@ -124,4 +124,50 @@ public class ConfigurationsTests
         // Assert - The exception should occur when trying to get the service, not during registration
         act.Should().NotThrow();
     }
+
+    [TestCase("system")]
+    [TestCase("")]
+    public void AddBlazorWalletConnect_WithInvalidThemeMode_ShouldThrow(string themeMode)
+    {
+        var act = () => _services.AddBlazorWalletConnect(options =>
+        {
+            options.ProjectId = "test-project-id";
+            options.ThemeMode = themeMode;
+            options.ColorMixStrength = 40;
+        }).BuildServiceProvider().GetRequiredService<IWalletConnectInterop>();
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("ThemeMode must be Auto, Light, or Dark.");
+    }
+
+    [TestCase("Auto")]
+    [TestCase("Light")]
+    [TestCase("Dark")]
+    public void AddBlazorWalletConnect_WithSupportedThemeMode_ShouldResolve(string themeMode)
+    {
+        _services.AddBlazorWalletConnect(options =>
+        {
+            options.ProjectId = "test-project-id";
+            options.ThemeMode = themeMode;
+        });
+
+        var service = _services.BuildServiceProvider().GetRequiredService<IWalletConnectInterop>();
+
+        service.Should().NotBeNull();
+    }
+
+    [TestCase(-1)]
+    [TestCase(101)]
+    public void AddBlazorWalletConnect_WithInvalidColorMixStrength_ShouldThrow(int colorMixStrength)
+    {
+        var act = () => _services.AddBlazorWalletConnect(options =>
+        {
+            options.ProjectId = "test-project-id";
+            options.ThemeMode = "auto";
+            options.ColorMixStrength = colorMixStrength;
+        }).BuildServiceProvider().GetRequiredService<IWalletConnectInterop>();
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("ColorMixStrength must be between 0 and 100.");
+    }
 }

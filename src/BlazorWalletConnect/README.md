@@ -4,7 +4,7 @@ A modern Blazor WebAssembly library for integrating WalletConnect into your Web3
 
 ## Features
 
-- 🔗 **Multi-Chain Support** - Ethereum, Polygon, Arbitrum, Optimism, BSC, and more
+- 🔗 **Multi-Chain Support** - Ethereum, Polygon, Arbitrum, Optimism, BSC, and Avalanche
 - 💼 **Wallet Operations** - Connect, disconnect, and manage wallet accounts
 - 💰 **Balance Queries** - Get native and ERC-20 token balances
 - 📝 **Message Signing** - Sign messages and typed data (EIP-712)
@@ -158,7 +158,7 @@ WalletConnect.ChainIdChanged += (sender, e) => {
 
 ## Requirements
 
-- .NET 9.*.* or later
+- .NET 10.*.* or later
 - Blazor WebAssembly
 - WalletConnect Project ID
 

@@ -31,6 +31,9 @@ public class WalletConnectOptions
     [JsonPropertyName("accentColor")]
     public required string AccentColor { get; set; }
 
+    [JsonPropertyName("colorMixStrength")]
+    public int ColorMixStrength { get; set; } = 40;
+
     [JsonPropertyName("chainIds")]
     public required List<ChainDto> Chains { get; set; }
 }

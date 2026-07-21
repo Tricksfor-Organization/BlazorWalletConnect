@@ -6,7 +6,7 @@ A Progressive Web App (PWA) demonstrating the integration of BlazorWalletConnect
 
 ### Prerequisites
 
-- .NET 9.*.* SDK or later
+- .NET 10.*.* SDK or later
 - A WalletConnect Project ID (free from [WalletConnect Cloud](https://cloud.walletconnect.com/))
 - (Optional) An Infura API key for custom RPC endpoints
 
@@ -52,7 +52,7 @@ A Progressive Web App (PWA) demonstrating the integration of BlazorWalletConnect
 This demo showcases the following features of BlazorWalletConnect:
 
 - ✅ Easy wallet connection with WalletConnect protocol
-- ✅ Support for multiple blockchain networks (Ethereum Mainnet, Sepolia, Polygon)
+- ✅ Support for multiple blockchain networks (Ethereum Mainnet, Polygon, Avalanche)
 - ✅ Account balance display
 - ✅ Chain switching support
 - ✅ Responsive design for mobile and desktop
@@ -81,14 +81,15 @@ builder.Services.AddBlazorWalletConnect(options =>
     options.Url = "https://your-app-url.com";
     options.TermsConditionsUrl = "https://your-app-url.com/terms";
     options.PrivacyPolicyUrl = "https://your-app-url.com/privacy";
-    options.ThemeMode = "dark"; // or "light"
+    options.ThemeMode = "dark"; // "auto", "light", or "dark"
     options.BackgroundColor = "#1a1a1a";
     options.AccentColor = "#3b82f6";
+    options.ColorMixStrength = 40;
     options.Chains = new List<BlazorWalletConnect.Models.ChainDto>
     {
         new(Chain.MainNet, "YOUR_RPC_URL"),
-        new(Chain.Sepolia, "YOUR_RPC_URL"),
-        new(Chain.Polygon, "YOUR_RPC_URL")
+        new(Chain.Polygon, "YOUR_RPC_URL"),
+        new(Chain.Avalanche, "https://api.avax.network/ext/bc/C/rpc")
     };
 });
 ```
@@ -98,8 +99,8 @@ builder.Services.AddBlazorWalletConnect(options =>
 The demo is configured to support:
 
 - Ethereum Mainnet
-- Ethereum Sepolia (testnet)
 - Polygon
+- Avalanche mainnet
 
 You can add more networks by adding them to the `Chains` list in the configuration.
 

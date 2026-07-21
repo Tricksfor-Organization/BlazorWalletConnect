@@ -153,10 +153,12 @@ public class WalletConnectOptionsTests
         var deserialized = JsonSerializer.Deserialize<WalletConnectOptions>(json);
 
         // Assert
+        json.Should().Contain("\"colorMixStrength\":40");
         deserialized.Should().NotBeNull();
         deserialized!.ProjectId.Should().Be(options.ProjectId);
         deserialized.Name.Should().Be(options.Name);
         deserialized.ThemeMode.Should().Be("dark");
+        deserialized.ColorMixStrength.Should().Be(40);
         deserialized.Chains.Should().HaveCount(1);
     }
 
@@ -223,6 +225,7 @@ public class WalletConnectOptionsTests
         options.ThemeMode.Should().Be("auto");
         options.BackgroundColor.Should().Be("#f0f0f0");
         options.AccentColor.Should().Be("#ff5500");
+        options.ColorMixStrength.Should().Be(40);
         options.Chains.Count.Should().Be(3);
     }
 }
@@ -278,5 +281,17 @@ public class ChainDtoTests
         mainnet.Chain.Should().Be(Chain.MainNet);
         polygon.Chain.Should().Be(Chain.Polygon);
         sepolia.Chain.Should().Be(Chain.Sepolia);
+    }
+
+    [Test]
+    public void ChainDto_ShouldSupportAvalancheMainnet()
+    {
+        // Arrange & Act
+        var avalanche = new ChainDto(Chain.Avalanche, "https://api.avax.network/ext/bc/C/rpc");
+        var json = JsonSerializer.Serialize(avalanche);
+
+        // Assert
+        avalanche.Chain.Should().Be(Chain.Avalanche);
+        json.Should().Contain("43114");
     }
 }

@@ -15,6 +15,18 @@ namespace BlazorWalletConnect
                 {
                     throw new InvalidOperationException("You must provide a project Id to initialise WalletConnect.");
                 }
+
+                if (!string.Equals(options.ThemeMode, "auto", StringComparison.OrdinalIgnoreCase)
+                    && !string.Equals(options.ThemeMode, "light", StringComparison.OrdinalIgnoreCase)
+                    && !string.Equals(options.ThemeMode, "dark", StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new InvalidOperationException("ThemeMode must be Auto, Light, or Dark.");
+                }
+
+                if (options.ColorMixStrength is < 0 or > 100)
+                {
+                    throw new InvalidOperationException("ColorMixStrength must be between 0 and 100.");
+                }
             });
 
             services.AddScoped<IWalletConnectInterop, WalletConnectInterop>();

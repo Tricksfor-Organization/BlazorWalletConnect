@@ -8,21 +8,19 @@ The test project has been successfully created and integrated with your solution
 
 ### 1. Test Project
 - **Location**: `tests/BlazorWalletConnect.Tests/`
-- **Framework**: .NET 9.0
-- **Tests**: 58 comprehensive unit tests
+- **Framework**: .NET 10.0
+- **Tests**: 68 comprehensive unit tests
 - **Status**: All passing ✅
 
 ### 2. Package Management
 Updated `Directory.Packages.props` with testing dependencies:
-- NUnit 4.4.0
-- NUnit3TestAdapter 4.6.0
-- Microsoft.NET.Test.Sdk 17.12.0
-- NSubstitute 5.3.0
-- NSubstitute.Analyzers.CSharp 1.0.17
-- FluentAssertions 8.8.0
-- bUnit 1.32.7
-- bunit.web 1.32.7
-- coverlet.collector 6.0.2
+- NUnit 4.6.1
+- NUnit3TestAdapter 6.2.0
+- Microsoft.NET.Test.Sdk 18.8.1
+- NSubstitute 6.0.0
+- FluentAssertions 8.10.0
+- bUnit 2.7.2
+- coverlet.collector 10.0.1
 
 ### 3. Test Files Created
 ```
@@ -74,8 +72,8 @@ dotnet restore
 ```
 ✅ Test Run Successful
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Total:     58 tests
-Passed:    58 tests  
+Total:     68 tests
+Passed:    68 tests
 Failed:    0 tests
 Skipped:   0 tests
 Duration:  ~2.0s
@@ -86,12 +84,13 @@ Duration:  ~2.0s
 
 | Component | Tests | Status |
 |-----------|-------|--------|
-| Configurations | 5 | ✅ |
-| WalletConnectInterop | 24 | ✅ |
+| Configurations | 12 | ✅ |
+| WalletConnectInterop | 25 | ✅ |
 | TransactionHelper | 5 | ✅ |
-| Models | 18 | ✅ |
+| Models | 19 | ✅ |
 | Event Args | 6 | ✅ |
-| **Total** | **58** | **✅** |
+| Components | 1 | ✅ |
+| **Total** | **68** | **✅** |
 
 ## Integration Status
 
@@ -191,6 +190,6 @@ dotnet build
 ---
 
 **Created**: November 9, 2025  
-**Framework**: .NET 9.0  
+**Framework**: .NET 10.0
 **Testing Stack**: NUnit + NSubstitute + FluentAssertions + bUnit  
 **Status**: Production Ready ✅

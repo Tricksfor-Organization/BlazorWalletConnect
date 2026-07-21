@@ -4,8 +4,8 @@
 Successfully created a comprehensive unit test project for BlazorWalletConnect using NUnit, NSubstitute, FluentAssertions, and bUnit.
 
 ## Test Statistics
-- **Total Tests**: 58
-- **Passed**: 58
+- **Total Tests**: 68
+- **Passed**: 68
 - **Failed**: 0
 - **Test Coverage**: Comprehensive coverage across all major components
 
@@ -14,15 +14,17 @@ Successfully created a comprehensive unit test project for BlazorWalletConnect u
 ```
 tests/BlazorWalletConnect.Tests/
 ├── ConfigurationTests/
-│   └── ConfigurationsTests.cs (5 tests)
+│   └── ConfigurationsTests.cs (12 tests)
 ├── ServiceTests/
-│   └── WalletConnectInteropTests.cs (24 tests)
+│   └── WalletConnectInteropTests.cs (25 tests)
 ├── HelperTests/
 │   └── TransactionHelperTests.cs (5 tests)
 ├── ModelTests/
-│   └── ModelTests.cs (18 tests)
+│   └── ModelTests.cs (19 tests)
 ├── EventTests/
 │   └── EventArgsTests.cs (6 tests)
+├── ComponentTests/
+│   └── WalletConnectButtonProviderTests.cs (1 test)
 ├── BlazorWalletConnect.Tests.csproj
 └── README.md
 ```
@@ -30,21 +32,19 @@ tests/BlazorWalletConnect.Tests/
 ## Testing Technologies
 
 ### Core Testing Framework
-- **NUnit 4.4.0** - Modern, feature-rich testing framework
-- **NUnit3TestAdapter 4.6.0** - VS Code & Visual Studio integration
-- **Microsoft.NET.Test.Sdk 17.12.0** - Test discovery and execution
+- **NUnit 4.6.1** - Modern, feature-rich testing framework
+- **NUnit3TestAdapter 6.2.0** - VS Code & Visual Studio integration
+- **Microsoft.NET.Test.Sdk 18.8.1** - Test discovery and execution
 
 ### Mocking & Assertions
-- **NSubstitute 5.3.0** - Friendly mocking framework for .NET
-- **NSubstitute.Analyzers.CSharp 1.0.17** - Static analysis for better mock usage
-- **FluentAssertions 8.8.0** - Expressive assertion library
+- **NSubstitute 6.0.0** - Friendly mocking framework for .NET
+- **FluentAssertions 8.10.0** - Expressive assertion library
 
 ### Blazor-Specific Testing
-- **bUnit 1.32.7** - Testing library for Blazor components
-- **bunit.web 1.32.7** - Web-specific bUnit extensions
+- **bUnit 2.7.2** - Testing library for Blazor components
 
 ### Code Coverage
-- **coverlet.collector 6.0.2** - Cross-platform code coverage
+- **coverlet.collector 10.0.1** - Cross-platform code coverage
 
 ## Central Package Management (CPM)
 All package versions are centrally managed in `Directory.Packages.props`, ensuring:
@@ -54,14 +54,14 @@ All package versions are centrally managed in `Directory.Packages.props`, ensuri
 
 ## Test Coverage Details
 
-### ConfigurationsTests (5 tests)
+### ConfigurationsTests (12 tests)
 ✓ Service registration with DI container
 ✓ ProjectId validation (required field)
 ✓ Service lifetime verification (Scoped)
 ✓ Error handling for null/empty ProjectId
 ✓ Null configuration handling
 
-### WalletConnectInteropTests (24 tests)
+### WalletConnectInteropTests (25 tests)
 ✓ Configuration lifecycle management
 ✓ Disconnect functionality
 ✓ Account retrieval and management
@@ -174,13 +174,13 @@ Potential additions:
 
 - All tests are isolated and can run in any order
 - No external dependencies required
-- Fast execution time (~2 seconds for 58 tests)
+- Fast execution time (under one second for 68 tests)
 - No test database or external services needed
-- Compatible with .NET 9.0
+- Compatible with .NET 10.0
 
 ## Success Metrics
 
-✅ 100% test pass rate (58/58)
+✅ 100% test pass rate (68/68)
 ✅ Comprehensive coverage of public APIs
 ✅ Clean build with only informational warnings
 ✅ CPM integration working correctly

@@ -4,13 +4,13 @@ This project contains comprehensive unit tests for the BlazorWalletConnect libra
 
 ## Testing Stack
 
-- **NUnit 4.4.0** - Testing framework
-- **NUnit3TestAdapter 4.6.0** - Test adapter for Visual Studio/VS Code
-- **Microsoft.NET.Test.Sdk 17.12.0** - Test platform
-- **NSubstitute 5.3.0** - Mocking framework
-- **FluentAssertions 8.8.0** - Assertion library
-- **bUnit 1.32.7** - Testing library for Blazor components
-- **coverlet.collector 6.0.2** - Code coverage tool
+- **NUnit 4.6.1** - Testing framework
+- **NUnit3TestAdapter 6.2.0** - Test adapter for Visual Studio/VS Code
+- **Microsoft.NET.Test.Sdk 18.8.1** - Test platform
+- **NSubstitute 6.0.0** - Mocking framework
+- **FluentAssertions 8.10.0** - Assertion library
+- **bUnit 2.7.2** - Testing library for Blazor components
+- **coverlet.collector 10.0.1** - Code coverage tool
 
 ## Project Structure
 
